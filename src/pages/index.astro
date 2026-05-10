@@ -1,69 +1,100 @@
 ---
-import { getCollection } from 'astro:content';
-import { COLUMNS_LIST, type ColumnSlug } from '../lib/columns';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/homepage/Hero.astro';
+import MosaicAnchorRow from '../components/homepage/MosaicAnchorRow.astro';
+import MosaicColumnShowcase from '../components/homepage/MosaicColumnShowcase.astro';
+import MosaicArchiveSampler from '../components/homepage/MosaicArchiveSampler.astro';
+import ManifestoStrip from '../components/homepage/ManifestoStrip.astro';
+import HamburgerMenu from '../components/chrome/HamburgerMenu.astro';
+import { getHomepageContent } from '../lib/homepage';
 
-const sections = await Promise.all(
-  COLUMNS_LIST.map(async (column) => {
-    const posts = await getCollection(column.slug as ColumnSlug);
-    posts.sort(
-      (a, b) =>
-        b.data.publishedDate.getTime() - a.data.publishedDate.getTime(),
-    );
-    return { column, posts };
-  }),
-);
+const { hero, anchorRow, showcase, archiveSampler, isSparse } =
+  await getHomepageContent();
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Sentence Structure — Phase 1</title>
-  </head>
-  <body class="min-h-screen">
-    <main class="mx-auto max-w-2xl px-6 py-16">
-      <p class="text-eyebrow font-sans uppercase opacity-60">Phase 1 splash</p>
-      <h1 class="text-title mt-2">Sentence Structure</h1>
-      <p class="text-deck mt-4 opacity-80">
-        Foundation in place. Replaced by the homepage in Phase 3.
-      </p>
+<BaseLayout
+  title="Sentence Structure — What They Don't Tell You"
+  description="A blog about the prison experience. Memoir, journalism, satire, poetry, and the cognitive practice that came with all four."
+>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      {
-        sections.map(({ column, posts }) => (
-          <section class="mt-12">
-            <h2
-              class="text-h2 font-sans"
-              style={`color: var(--color-${column.slug}-300)`}
-            >
-              {column.name}
-            </h2>
-            <p class="text-meta font-sans mt-1 opacity-60">{column.deck}</p>
-            {posts.length === 0 ? (
-              <p class="text-body mt-3 italic opacity-50">No posts yet.</p>
-            ) : (
-              <ul class="mt-4 space-y-2">
-                {posts.map((post) => (
-                  <li class="text-body">
-                    <span class="text-meta font-mono opacity-60">
-                      {post.data.publishedDate.toISOString().slice(0, 10)}
-                    </span>
-                    <a
-                      class="ml-3 underline decoration-1 underline-offset-2 opacity-90 hover:opacity-100"
-                      href={`/${column.slug}/${post.id}`}
-                    >
-                      {post.data.title || '[ untitled ]'}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        ))
-      }
-    </main>
-  </body>
-</html>
+  <header class="home-header">
+    <a href="/" class="home-header__wordmark">Sentence Structure</a>
+  </header>
+
+  {
+    !hero && (
+      /* No Memoir posts: hamburger still needs to live somewhere visible. */
+      <div class="home-header__chrome-fallback">
+        <HamburgerMenu />
+      </div>
+    )
+  }
+
+  <main id="main">
+    {hero && <Hero post={hero} />}
+
+    {anchorRow.length > 0 && <MosaicAnchorRow posts={anchorRow} />}
+
+    <MosaicColumnShowcase showcase={showcase} />
+
+    {
+      archiveSampler.length > 0 && (
+        <MosaicArchiveSampler posts={archiveSampler} />
+      )
+    }
+
+    <ManifestoStrip isSparse={isSparse} />
+  </main>
+</BaseLayout>
+
+<style>
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-elevated);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    border: 1px solid var(--color-border);
+    z-index: 100;
+  }
+
+  .skip-link:focus-visible {
+    top: 0;
+  }
+
+  .home-header {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.5rem;
+    z-index: 30;
+  }
+
+  .home-header__wordmark {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    text-decoration: none;
+    background: var(--glass-floating);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 0.5rem 0.95rem;
+    transition: background 0.15s ease;
+  }
+
+  .home-header__wordmark:hover {
+    background: var(--glass-floating-hover);
+  }
+
+  /* prefers-reduced-transparency handled globally in global.css. */
+
+  main {
+    position: relative;
+  }
+</style>

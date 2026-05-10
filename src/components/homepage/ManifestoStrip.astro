@@ -1,0 +1,111 @@
+---
+interface Props {
+  isSparse: boolean;
+}
+
+const { isSparse } = Astro.props;
+---
+
+<section
+  class:list={['manifesto', isSparse && 'manifesto--sparse']}
+  aria-labelledby="manifesto-title"
+>
+  <a class="manifesto__inner" href="/about">
+    <p class="manifesto__eyebrow">Sentence Structure</p>
+    <h2 class="manifesto__title" id="manifesto-title">
+      What They Don't Tell You
+    </h2>
+    <p class="manifesto__deck">
+      A blog about the prison experience. Memoir, journalism, satire,
+      poetry, and the cognitive practice that came with all four.
+    </p>
+    <span class="manifesto__cta" aria-hidden="true">About the publication →</span>
+  </a>
+</section>
+
+<style>
+  .manifesto {
+    margin: 4rem auto;
+    padding: 4rem 1.5rem;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--color-structural-500) 15%, var(--color-bg)) 0%,
+      var(--color-bg) 100%
+    );
+    border-top: 1px solid color-mix(in oklch, var(--color-structural-500) 35%, transparent);
+    border-bottom: 1px solid color-mix(in oklch, var(--color-structural-500) 35%, transparent);
+  }
+
+  .manifesto--sparse {
+    margin: 5rem auto;
+    padding: 7rem 1.5rem;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--color-structural-500) 22%, var(--color-bg)) 0%,
+      var(--color-bg) 100%
+    );
+  }
+
+  .manifesto__inner {
+    display: block;
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: left;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .manifesto__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-structural-200);
+    margin: 0 0 1rem;
+  }
+
+  .manifesto__title {
+    font-family: var(--font-serif);
+    font-size: clamp(42px, 3.13vw + 32px, 64px);
+    line-height: 1.05;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0 0 1.25rem;
+    max-width: 16ch;
+  }
+
+  .manifesto--sparse .manifesto__title {
+    font-size: clamp(48px, 4.5vw + 32px, 84px);
+    max-width: 14ch;
+  }
+
+  .manifesto__deck {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0 0 1.5rem;
+    max-width: 48ch;
+  }
+
+  .manifesto__cta {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-structural-200);
+    border-bottom: 1px solid color-mix(in oklch, var(--color-structural-300) 50%, transparent);
+    padding-bottom: 2px;
+  }
+
+  .manifesto__inner:hover .manifesto__cta {
+    color: var(--color-structural-100);
+    border-bottom-color: var(--color-structural-300);
+  }
+
+  .manifesto__inner:focus-visible {
+    outline: 2px solid var(--color-structural-300);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+</style>

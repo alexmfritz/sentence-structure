@@ -1,0 +1,185 @@
+---
+import { COLUMNS_LIST } from '../../lib/columns';
+---
+
+<div class="hamburger" data-hamburger>
+  <button
+    class="hamburger__trigger"
+    type="button"
+    aria-expanded="false"
+    aria-controls="hamburger-panel"
+    aria-label="Open menu"
+  >
+    <span></span><span></span><span></span>
+  </button>
+
+  <div
+    id="hamburger-panel"
+    class="hamburger__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Site navigation"
+    data-open="false"
+    inert
+  >
+    <nav class="hamburger__nav">
+      <p class="hamburger__group-label">Columns</p>
+      <ul>
+        {
+          COLUMNS_LIST.map((c) => (
+            <li data-column={c.slug}>
+              <a href={`/${c.slug}`}>{c.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="hamburger__group-label">Read</p>
+      <ul>
+        <li><a href="/archive">Archive</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-hamburger]').forEach((root) => {
+    const trigger = root.querySelector<HTMLButtonElement>('.hamburger__trigger');
+    const panel = root.querySelector<HTMLElement>('.hamburger__panel');
+    if (!trigger || !panel) return;
+
+    const setOpen = (open: boolean) => {
+      trigger.setAttribute('aria-expanded', String(open));
+      trigger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      panel.dataset.open = String(open);
+      if (open) {
+        panel.removeAttribute('inert');
+        document.body.style.overflow = 'hidden';
+      } else {
+        panel.setAttribute('inert', '');
+        document.body.style.overflow = '';
+      }
+    };
+
+    trigger.addEventListener('click', () => {
+      setOpen(panel.dataset.open !== 'true');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.dataset.open === 'true') {
+        setOpen(false);
+        trigger.focus();
+      }
+    });
+  });
+</script>
+
+<style>
+  .hamburger {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 25;
+  }
+
+  .hamburger__trigger {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: var(--glass-trigger);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .hamburger__trigger span {
+    display: block;
+    width: 16px;
+    height: 1.5px;
+    background: var(--color-text);
+    border-radius: 1px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .hamburger__trigger[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(5.5px) rotate(45deg);
+  }
+  .hamburger__trigger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .hamburger__trigger[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-5.5px) rotate(-45deg);
+  }
+
+  .hamburger__panel {
+    position: fixed;
+    inset: 0;
+    background: var(--glass-panel);
+    backdrop-filter: var(--glass-blur-strong);
+    padding: 5rem 2rem 2rem;
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .hamburger__panel[data-open='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hamburger__nav {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .hamburger__group-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  .hamburger__nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hamburger__nav a {
+    display: block;
+    padding: 0.5rem 0;
+    font-family: var(--font-serif);
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .hamburger__nav li[data-column='memoir'] a:hover         { border-bottom-color: var(--color-memoir-400); }
+  .hamburger__nav li[data-column='concrete-truths'] a:hover { border-bottom-color: var(--color-concrete-truths-400); }
+  .hamburger__nav li[data-column='economics-of'] a:hover    { border-bottom-color: var(--color-economics-of-400); }
+  .hamburger__nav li[data-column='off-the-record'] a:hover  { border-bottom-color: var(--color-off-the-record-400); }
+  .hamburger__nav li[data-column='protective-factors'] a:hover { border-bottom-color: var(--color-protective-factors-400); }
+
+  /* prefers-reduced-transparency handled globally in global.css. */
+
+  @media (min-width: 769px) {
+    .hamburger {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,174 @@
+---
+import type { HomepagePost } from '../../lib/homepage';
+import { COLUMNS } from '../../lib/columns';
+
+interface Props {
+  posts: HomepagePost[];
+}
+
+const { posts } = Astro.props;
+const [feature, ...rest] = posts;
+const stacked = rest.slice(0, 2);
+
+function href(post: HomepagePost) {
+  return `/${post.collection}/${post.id}`;
+}
+---
+
+{
+  feature && (
+    <section class="anchor-row" aria-label="Recent pieces">
+      <a class="anchor-row__feature" href={href(feature)} data-column={feature.collection}>
+        <div class="anchor-row__feature-bg" aria-hidden="true" />
+        <div class="anchor-row__feature-content">
+          <span class="tile__pill">{COLUMNS[feature.collection].name}</span>
+          <h3 class="anchor-row__feature-title">
+            {feature.data.title || '[ untitled ]'}
+          </h3>
+          {feature.data.deck && (
+            <p class="anchor-row__feature-deck">{feature.data.deck}</p>
+          )}
+        </div>
+      </a>
+
+      <div class="anchor-row__stack">
+        {stacked.map((post) => (
+          <a class="anchor-row__small" href={href(post)} data-column={post.collection}>
+            <div class="anchor-row__small-bg" aria-hidden="true" />
+            <div class="anchor-row__small-content">
+              <span class="tile__pill">{COLUMNS[post.collection].name}</span>
+              <h3 class="anchor-row__small-title">
+                {post.data.title || '[ untitled ]'}
+              </h3>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .anchor-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0.75rem;
+    margin: 2.5rem auto;
+    max-width: 1100px;
+    padding: 0 1.5rem;
+  }
+
+  .anchor-row__feature,
+  .anchor-row__small {
+    position: relative;
+    display: block;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+
+  .anchor-row__feature:hover,
+  .anchor-row__small:hover {
+    transform: translateY(-2px);
+  }
+
+  .anchor-row__feature {
+    aspect-ratio: 4 / 3;
+  }
+
+  .anchor-row__feature-bg,
+  .anchor-row__small-bg {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklch, var(--column-500) 32%, var(--color-bg-elevated));
+    border: 1px solid var(--column-600);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  .anchor-row__feature:hover .anchor-row__feature-bg,
+  .anchor-row__small:hover .anchor-row__small-bg {
+    background: color-mix(in oklch, var(--column-500) 48%, var(--color-bg-elevated));
+  }
+
+  .anchor-row__feature-content,
+  .anchor-row__small-content {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .anchor-row__feature-title {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+    max-width: 22ch;
+  }
+
+  .anchor-row__feature-deck {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.45;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 38ch;
+  }
+
+  .anchor-row__stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .anchor-row__small {
+    aspect-ratio: 1 / 1;
+  }
+
+  .anchor-row__small-title {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .tile__pill {
+    align-self: flex-start;
+    display: inline-flex;
+    padding: 0.2rem 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--column-100);
+    background: color-mix(in oklch, var(--column-500) 50%, transparent);
+    border: 1px solid var(--column-500);
+    border-radius: 999px;
+  }
+
+  @media (max-width: 768px) {
+    .anchor-row {
+      grid-template-columns: 1fr;
+    }
+    .anchor-row__feature {
+      aspect-ratio: 4 / 3;
+    }
+    .anchor-row__stack {
+      grid-template-rows: auto auto;
+      grid-template-columns: 1fr 1fr;
+    }
+    .anchor-row__feature-title {
+      font-size: 26px;
+    }
+  }
+</style>

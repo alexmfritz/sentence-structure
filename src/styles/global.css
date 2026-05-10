@@ -142,6 +142,39 @@
   --color-text-secondary: oklch(0.72 0.005 280);
   --color-text-tertiary: oklch(0.50 0.005 280);
   --color-border: oklch(0.30 0.005 280);
+
+  /* ============================================================
+     LIQUID GLASS SURFACES — translucent chrome treatments.
+     Tiers reflect intent, not arbitrary opacity steps:
+       floating  → wordmark, hero card. Maximum imagery showthrough.
+       trigger   → chrome buttons (menu wheel/hamburger triggers).
+       pill      → menu wheel items. Opaque enough that text reads.
+       panel     → full-screen mobile menu. Near-opaque overlay.
+     Borders + blur tokenized so prefers-reduced-transparency can
+     globally swap them to solid surfaces and disable blur.
+     Light/high-contrast retrofit changes the values here only.
+     ============================================================ */
+
+  --glass-floating: oklch(0.13 0.005 280 / 0.55);
+  --glass-floating-hover: oklch(0.18 0.005 280 / 0.7);
+
+  --glass-trigger: oklch(0.15 0.005 280 / 0.55);
+  --glass-trigger-hover: oklch(0.20 0.005 280 / 0.75);
+
+  --glass-pill: oklch(0.18 0.005 280 / 0.85);
+  --glass-pill-hover: oklch(0.24 0.005 280 / 0.92);
+
+  --glass-panel: oklch(0.10 0.005 280 / 0.96);
+
+  --glass-border: oklch(0.95 0.005 280 / 0.12);
+  --glass-border-strong: oklch(0.95 0.005 280 / 0.18);
+
+  --glass-blur: blur(14px);
+  --glass-blur-strong: blur(20px) saturate(120%);
+
+  /* Drop-shadow color (for elevated UI like dropdowns). Tokenized
+     because light mode wants a softer shadow than dark mode. */
+  --shadow-color: oklch(0 0 0 / 0.4);
 }
 
 @layer base {
@@ -225,5 +258,27 @@
     float: left;
     margin: 0.05em 0.12em 0 0;
     color: var(--color-text);
+  }
+}
+
+/* ============================================================
+   prefers-reduced-transparency — every glass surface falls back
+   to a solid panel by overriding the glass tokens at :root. No
+   component needs its own @media block.
+   ============================================================ */
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-floating: var(--color-bg-elevated);
+    --glass-floating-hover: var(--color-bg-elevated);
+    --glass-trigger: var(--color-bg-elevated);
+    --glass-trigger-hover: var(--color-bg-elevated);
+    --glass-pill: var(--color-bg-elevated);
+    --glass-pill-hover: var(--color-bg-elevated);
+    --glass-panel: var(--color-bg);
+    --glass-border: var(--color-border);
+    --glass-border-strong: var(--color-border);
+    --glass-blur: none;
+    --glass-blur-strong: none;
   }
 }
