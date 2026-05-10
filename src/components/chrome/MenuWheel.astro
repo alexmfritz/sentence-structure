@@ -1,0 +1,282 @@
+---
+import { COLUMNS_LIST } from '../../lib/columns';
+
+interface Item {
+  label: string;
+  href: string;
+  column?: string;
+}
+
+const items: Item[] = [
+  ...COLUMNS_LIST.map((c) => ({
+    label: c.name,
+    href: `/${c.slug}`,
+    column: c.slug,
+  })),
+  { label: 'Archive', href: '/archive' },
+  { label: 'About', href: '/about' },
+];
+---
+
+<nav class="menu-wheel" aria-label="Site navigation" data-menu-wheel>
+  <button
+    class="menu-wheel__trigger"
+    type="button"
+    aria-expanded="false"
+    aria-controls="menu-wheel-items"
+    aria-label="Open menu"
+  >
+    <span class="menu-wheel__trigger-bar"></span>
+    <span class="menu-wheel__trigger-bar"></span>
+    <span class="menu-wheel__trigger-bar"></span>
+  </button>
+
+  <ul
+    id="menu-wheel-items"
+    class="menu-wheel__items"
+    role="menu"
+    data-open="false"
+  >
+    {
+      items.map((item, i) => (
+        <li
+          class="menu-wheel__item"
+          style={`--i: ${i}; --total: ${items.length};`}
+          data-column={item.column}
+        >
+          <a href={item.href} role="menuitem" tabindex="-1">
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  type WheelEl = HTMLElement;
+
+  const wheels = document.querySelectorAll<WheelEl>('[data-menu-wheel]');
+  wheels.forEach((wheel) => {
+    const trigger = wheel.querySelector<HTMLButtonElement>('.menu-wheel__trigger');
+    const itemsList = wheel.querySelector<HTMLElement>('.menu-wheel__items');
+    const links = wheel.querySelectorAll<HTMLAnchorElement>(
+      '.menu-wheel__item a',
+    );
+    if (!trigger || !itemsList) return;
+
+    const setOpen = (open: boolean) => {
+      trigger.setAttribute('aria-expanded', String(open));
+      itemsList.dataset.open = String(open);
+      links.forEach((a) => {
+        a.tabIndex = open ? 0 : -1;
+      });
+      trigger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    const isOpen = () => itemsList.dataset.open === 'true';
+
+    trigger.addEventListener('click', () => {
+      const willOpen = !isOpen();
+      setOpen(willOpen);
+      if (willOpen) {
+        // focus first item shortly after open so the focus ring is visible
+        requestAnimationFrame(() => links[0]?.focus());
+      }
+    });
+
+    wheel.addEventListener('keydown', (e) => {
+      const event = e as KeyboardEvent;
+      if (event.key === 'Escape' && isOpen()) {
+        setOpen(false);
+        trigger.focus();
+        return;
+      }
+      if (!isOpen()) return;
+
+      const focusables = Array.from(links);
+      const idx = focusables.indexOf(document.activeElement as HTMLAnchorElement);
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        const next = focusables[(idx + 1) % focusables.length];
+        next?.focus();
+      } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        const prev =
+          focusables[(idx - 1 + focusables.length) % focusables.length];
+        prev?.focus();
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        focusables[0]?.focus();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        focusables[focusables.length - 1]?.focus();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (isOpen() && !wheel.contains(e.target as Node)) setOpen(false);
+    });
+  });
+</script>
+
+<style>
+  .menu-wheel {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 20;
+  }
+
+  .menu-wheel__trigger {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 999px;
+    background: oklch(0.15 0.005 280 / 0.55);
+    backdrop-filter: blur(14px);
+    border: 1px solid oklch(0.95 0.005 280 / 0.18);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: background 0.15s ease;
+  }
+
+  .menu-wheel__trigger:hover,
+  .menu-wheel__trigger[aria-expanded='true'] {
+    background: oklch(0.20 0.005 280 / 0.75);
+  }
+
+  .menu-wheel__trigger:focus-visible {
+    outline: 2px solid var(--color-structural-300);
+    outline-offset: 2px;
+  }
+
+  .menu-wheel__trigger-bar {
+    width: 18px;
+    height: 1.5px;
+    background: var(--color-text);
+    border-radius: 1px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .menu-wheel__trigger[aria-expanded='true'] .menu-wheel__trigger-bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .menu-wheel__trigger[aria-expanded='true'] .menu-wheel__trigger-bar:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-wheel__trigger[aria-expanded='true'] .menu-wheel__trigger-bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  .menu-wheel__items {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .menu-wheel__items[data-open='true'] {
+    pointer-events: auto;
+  }
+
+  /* Wedge layout: items radiate from the trigger toward down-and-left.
+     Angle range 105°-180° in CSS coords (down-right toward straight-left).
+     Each item gets an angle interpolated by --i / (--total - 1). */
+  .menu-wheel__item {
+    --start-deg: 110;
+    --end-deg: 180;
+    --angle: calc(
+      (var(--start-deg) + (var(--end-deg) - var(--start-deg)) * var(--i) / (var(--total) - 1)) * 1deg
+    );
+    --radius: 175px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+    transition:
+      transform 0.32s cubic-bezier(0.18, 0.74, 0.28, 1),
+      opacity 0.22s ease;
+  }
+
+  .menu-wheel__items[data-open='true'] .menu-wheel__item {
+    transform:
+      translate(
+        calc(cos(var(--angle)) * var(--radius)),
+        calc(sin(var(--angle)) * var(--radius))
+      )
+      scale(1);
+    opacity: 1;
+    transition-delay: calc(var(--i) * 30ms);
+  }
+
+  .menu-wheel__item a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    background: oklch(0.18 0.005 280 / 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(0.95 0.005 280 / 0.12);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .menu-wheel__item[data-column='memoir'] a:hover         { border-color: var(--color-memoir-400); }
+  .menu-wheel__item[data-column='concrete-truths'] a:hover { border-color: var(--color-concrete-truths-400); }
+  .menu-wheel__item[data-column='economics-of'] a:hover    { border-color: var(--color-economics-of-400); }
+  .menu-wheel__item[data-column='off-the-record'] a:hover  { border-color: var(--color-off-the-record-400); }
+  .menu-wheel__item[data-column='protective-factors'] a:hover { border-color: var(--color-protective-factors-400); }
+
+  .menu-wheel__item a:hover {
+    background: oklch(0.24 0.005 280 / 0.92);
+  }
+
+  .menu-wheel__item a:focus-visible {
+    outline: 2px solid var(--color-structural-300);
+    outline-offset: 2px;
+  }
+
+  /* prefers-reduced-motion: keep the wedge layout but skip the animation. */
+  @media (prefers-reduced-motion: reduce) {
+    .menu-wheel__item,
+    .menu-wheel__items[data-open='true'] .menu-wheel__item {
+      transition: none;
+      transition-delay: 0s;
+    }
+  }
+
+  /* prefers-reduced-transparency: solid surfaces. */
+  @media (prefers-reduced-transparency: reduce) {
+    .menu-wheel__trigger {
+      background: var(--color-bg-elevated);
+      backdrop-filter: none;
+      border-color: var(--color-border);
+    }
+    .menu-wheel__item a {
+      background: var(--color-bg-elevated);
+      backdrop-filter: none;
+      border-color: var(--color-border);
+    }
+  }
+
+  /* Hidden on small viewports — the HamburgerMenu takes over there. */
+  @media (max-width: 768px) {
+    .menu-wheel {
+      display: none;
+    }
+  }
+</style>
