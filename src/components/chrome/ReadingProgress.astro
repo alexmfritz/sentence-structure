@@ -1,8 +1,13 @@
 ---
+interface Props {
+  variant?: 'column' | 'structural';
+}
+
+const { variant = 'column' } = Astro.props;
 ---
 
 <div class="reading-progress" aria-hidden="true">
-  <div class="reading-progress__fill"></div>
+  <div class:list={['reading-progress__fill', `reading-progress__fill--${variant}`]}></div>
 </div>
 
 <script>
@@ -36,7 +41,14 @@
   .reading-progress__fill {
     height: 100%;
     width: 0;
-    background: var(--column-400);
     transition: width 0.05s linear;
+  }
+
+  .reading-progress__fill--column {
+    background: var(--column-400);
+  }
+
+  .reading-progress__fill--structural {
+    background: var(--color-structural-400);
   }
 </style>

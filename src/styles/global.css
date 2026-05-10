@@ -246,6 +246,21 @@
   }
 
   /* ============================================================
+     PLACEHOLDER convention — bracketed mono paragraphs in scaffolded
+     pages (e.g. the about-page essay before Alex writes it).
+     Marks the difference between "design intent" and "real prose"
+     so reviewers can see the structure without mistaking the
+     placeholder text for finished writing.
+     ============================================================ */
+
+  .placeholder {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  /* ============================================================
      DROP CAP — Memoir column only. Scoped by data-column on the
      post body wrapper so other columns never inherit it.
      ============================================================ */

@@ -1,0 +1,219 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TopNav from '../components/chrome/TopNav.astro';
+import ReadingProgress from '../components/chrome/ReadingProgress.astro';
+import NewsletterPrompt from '../components/chrome/NewsletterPrompt.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    deck?: string;
+    lastUpdated: string;
+    contactEmail?: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const lastUpdatedLabel = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+}).format(new Date(frontmatter.lastUpdated));
+
+const contactEmail = frontmatter.contactEmail ?? 'hello@sentencestructure.blog';
+---
+
+<BaseLayout
+  title={`${frontmatter.title} — Sentence Structure`}
+  description={frontmatter.description ?? frontmatter.deck}
+>
+  <ReadingProgress variant="structural" />
+  <TopNav />
+
+  <article class="about">
+    <header class="about__header">
+      <p class="about__eyebrow">About</p>
+      <h1 class="about__title">{frontmatter.title}</h1>
+      {frontmatter.deck && <p class="about__deck">{frontmatter.deck}</p>}
+    </header>
+
+    <div class="about__hero" aria-hidden="true">
+      <div class="about__hero-block"></div>
+    </div>
+
+    <div class="about__byline">
+      Last updated <time datetime={frontmatter.lastUpdated}>{lastUpdatedLabel}</time>
+    </div>
+
+    <div class="about__body">
+      <slot />
+    </div>
+
+    <div class="about__contact">
+      <p>
+        <span class="about__contact-label">Contact</span>
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+      </p>
+    </div>
+
+    <NewsletterPrompt />
+  </article>
+</BaseLayout>
+
+<style>
+  .about__header {
+    max-width: 480px;
+    margin: 3rem auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .about__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-structural-200);
+    margin: 0 0 0.75rem;
+  }
+
+  .about__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 2vw + 24px, 44px);
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .about__deck {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 1rem 0 0;
+    max-width: 38ch;
+  }
+
+  .about__hero {
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .about__hero-block {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    border-radius: 4px;
+    background: radial-gradient(
+      ellipse at 65% 40%,
+      color-mix(in oklch, var(--color-structural-400) 35%, var(--color-bg-elevated)) 0%,
+      color-mix(in oklch, var(--color-structural-500) 30%, var(--color-bg)) 60%,
+      var(--color-bg) 100%
+    );
+    border: 1px solid var(--color-structural-600);
+  }
+
+  .about__byline {
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .about__body {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--color-text);
+  }
+
+  /* Body typography for the slotted MDX content. */
+  .about__body :global(p) {
+    margin: 0 0 1.25rem;
+  }
+
+  .about__body :global(h2) {
+    font-family: var(--font-sans);
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 2.5rem 0 1rem;
+  }
+
+  .about__body :global(h3) {
+    font-family: var(--font-sans);
+    font-size: 19px;
+    line-height: 1.3;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 2rem 0 0.75rem;
+  }
+
+  .about__body :global(strong) {
+    font-weight: 600;
+  }
+
+  .about__body :global(em) {
+    font-style: italic;
+  }
+
+  /* About body uses structural purple for inline links — column
+     accents would muddy the publication-wide framing. */
+  .about__body :global(a) {
+    color: var(--color-structural-200);
+    text-decoration: underline;
+    text-decoration-color: var(--color-structural-500);
+    text-underline-offset: 0.2em;
+  }
+
+  .about__body :global(a:hover) {
+    text-decoration-color: var(--color-structural-300);
+  }
+
+  .about__contact {
+    max-width: 480px;
+    margin: 3rem auto;
+    padding: 1.5rem 1.5rem 0;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .about__contact p {
+    margin: 0;
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .about__contact-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+
+  .about__contact a {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-structural-500);
+    text-underline-offset: 0.2em;
+  }
+
+  .about__contact a:hover {
+    text-decoration-color: var(--color-structural-300);
+  }
+</style>
