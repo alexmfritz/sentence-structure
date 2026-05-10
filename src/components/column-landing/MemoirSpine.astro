@@ -214,6 +214,15 @@ const dateLabel = (d: Date) =>
     min-height: 120px;
   }
 
+  /* Community-custody is the current phase. Posts in it are
+     chronologically BEFORE the "I am here" marker (you can't write
+     about future events), so cluster them at the top of the body
+     to keep the marker's 71% position visually clear. */
+  .phase[data-phase='community-custody'] .phase__body {
+    justify-content: flex-start;
+    gap: 1.5rem;
+  }
+
   /* ============================================================
      Spine card — alternating left/right of the spine, connected
      by a horizontal connector line + dot at the spine intersection.
