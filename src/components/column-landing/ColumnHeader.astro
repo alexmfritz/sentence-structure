@@ -1,0 +1,86 @@
+---
+import { COLUMNS, type ColumnSlug } from '../../lib/columns';
+
+interface Props {
+  column: ColumnSlug;
+  manifesto?: string;
+}
+
+const { column, manifesto } = Astro.props;
+const meta = COLUMNS[column];
+---
+
+<header class="column-header" data-column={column}>
+  <div class="column-header__inner">
+    <p class="column-header__eyebrow">Column</p>
+    <h1 class="column-header__title">{meta.name}</h1>
+    <p class="column-header__deck">{meta.deck}</p>
+    {manifesto && <p class="column-header__manifesto">{manifesto}</p>}
+    <slot name="below-deck" />
+  </div>
+</header>
+
+<style>
+  .column-header {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: linear-gradient(
+      170deg,
+      color-mix(in oklch, var(--column-400) 28%, var(--color-bg)) 0%,
+      color-mix(in oklch, var(--column-500) 18%, var(--color-bg)) 60%,
+      var(--color-bg) 100%
+    );
+    border-bottom: 1px solid color-mix(in oklch, var(--column-600) 60%, transparent);
+  }
+
+  .column-header__inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 3rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .column-header__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--column-200);
+    margin: 0;
+  }
+
+  .column-header__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 2vw + 24px, 44px);
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .column-header__deck {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 38ch;
+  }
+
+  .column-header__manifesto {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    margin: 1.25rem 0 0;
+    max-width: 52ch;
+  }
+</style>

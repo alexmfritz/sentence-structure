@@ -1,0 +1,421 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TopNav from '../chrome/TopNav.astro';
+import NewsletterPrompt from '../chrome/NewsletterPrompt.astro';
+import ColumnHeader from './ColumnHeader.astro';
+import ColumnEmptyState from './ColumnEmptyState.astro';
+import ColumnSubscribePrompt from './ColumnSubscribePrompt.astro';
+import {
+  getBaseTemplateContent,
+  COLUMN_EMPTY_STATES,
+  type ColumnEntry,
+} from '../../lib/column-landing';
+import { COLUMNS, type ColumnSlug } from '../../lib/columns';
+
+interface Props {
+  column: ColumnSlug;
+}
+
+const { column } = Astro.props;
+const meta = COLUMNS[column];
+const content = await getBaseTemplateContent(column);
+const empty = COLUMN_EMPTY_STATES[column];
+
+function href(post: ColumnEntry): string {
+  return `/${post.collection}/${post.id}`;
+}
+---
+
+<BaseLayout
+  title={`${meta.name} — Sentence Structure`}
+  description={meta.deck}
+>
+  <div data-column={column}>
+    <TopNav />
+
+    <ColumnHeader
+      column={column}
+      manifesto={content.isEmpty ? empty.manifesto : undefined}
+    />
+
+    {
+      content.isEmpty && (
+        <ColumnEmptyState column={column} placeholders={empty.placeholders} />
+      )
+    }
+    {content.isEmpty && <ColumnSubscribePrompt column={column} />}
+
+    {
+      content.feature && (
+        <a class="feature" href={href(content.feature)} data-column={content.feature.collection}>
+          <div class="feature__image" aria-hidden="true" />
+          <div class="feature__overlay">
+            <span class="feature__pill">{meta.name}</span>
+            <h2 class="feature__title">
+              {content.feature.data.title || '[ untitled ]'}
+            </h2>
+            {content.feature.data.deck && (
+              <p class="feature__deck">{content.feature.data.deck}</p>
+            )}
+          </div>
+        </a>
+      )
+    }
+
+    {
+      content.row1Large && (
+        <section class="mosaic-row mosaic-row--1" aria-label="Recent pieces">
+          <a class="tile tile--large" href={href(content.row1Large)} data-column={content.row1Large.collection}>
+            <div class="tile__bg" aria-hidden="true" />
+            <div class="tile__content">
+              <span class="tile__pill">{meta.name}</span>
+              <h3 class="tile__title">
+                {content.row1Large.data.title || '[ untitled ]'}
+              </h3>
+            </div>
+          </a>
+          {content.row1Small.length > 0 && (
+            <div class="mosaic-row__stack">
+              {content.row1Small.map((post) => (
+                <a class="tile tile--small" href={href(post)} data-column={post.collection}>
+                  <div class="tile__bg" aria-hidden="true" />
+                  <div class="tile__content">
+                    <span class="tile__pill">{meta.name}</span>
+                    <h3 class="tile__title tile__title--sm">
+                      {post.data.title || '[ untitled ]'}
+                    </h3>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </section>
+      )
+    }
+
+    {
+      content.row2.length > 0 && (
+        <section class="mosaic-row mosaic-row--2" aria-label="More pieces">
+          {content.row2.map((post) => (
+            <a class="tile tile--medium" href={href(post)} data-column={post.collection}>
+              <div class="tile__bg" aria-hidden="true" />
+              <div class="tile__content">
+                <span class="tile__pill">{meta.name}</span>
+                <h3 class="tile__title tile__title--sm">
+                  {post.data.title || '[ untitled ]'}
+                </h3>
+                {post.data.deck && (
+                  <p class="tile__deck">{post.data.deck}</p>
+                )}
+              </div>
+            </a>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      content.row3.length > 0 && (
+        <section class="mosaic-row mosaic-row--3" aria-label="Archive sampler">
+          {content.row3.map((post) => (
+            <a class="tile tile--square" href={href(post)} data-column={post.collection}>
+              <div class="tile__bg" aria-hidden="true" />
+              <div class="tile__content">
+                <span class="tile__pill">{meta.name}</span>
+                <h3 class="tile__title tile__title--xs">
+                  {post.data.title || '[ untitled ]'}
+                </h3>
+              </div>
+            </a>
+          ))}
+          {content.showViewAllTile && (
+            <a class="tile tile--square tile--archive" href="/archive">
+              <div class="tile__bg" aria-hidden="true" />
+              <div class="tile__content tile__content--center">
+                <span class="tile__archive-eyebrow">Archive</span>
+                <span class="tile__archive-cta">View all →</span>
+              </div>
+            </a>
+          )}
+        </section>
+      )
+    }
+
+    {!content.isEmpty && <NewsletterPrompt />}
+  </div>
+</BaseLayout>
+
+<style>
+  /* ============================================================
+     Feature post — full-bleed-ish hero treatment for the column.
+     16:9 aspect with glass overlay at low-left. Smaller than the
+     homepage hero (2:1) since the column header already carries
+     the page H1.
+     ============================================================ */
+
+  .feature {
+    position: relative;
+    display: block;
+    max-width: 1100px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+
+  .feature:hover {
+    transform: translateY(-2px);
+  }
+
+  .feature__image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+    background: radial-gradient(
+      ellipse at 70% 35%,
+      color-mix(in oklch, var(--column-400) 35%, var(--color-bg-elevated)) 0%,
+      color-mix(in oklch, var(--column-500) 30%, var(--color-bg)) 60%,
+      var(--color-bg) 100%
+    );
+    border: 1px solid var(--column-600);
+  }
+
+  .feature__overlay {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 3rem;
+    right: 3rem;
+    max-width: 480px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: var(--glass-floating);
+    backdrop-filter: var(--glass-blur-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+  }
+
+  .feature__pill {
+    align-self: flex-start;
+    padding: 0.2rem 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--column-100);
+    background: color-mix(in oklch, var(--column-500) 50%, transparent);
+    border: 1px solid var(--column-500);
+    border-radius: 999px;
+  }
+
+  .feature__title {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .feature__deck {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.45;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 42ch;
+  }
+
+  /* ============================================================
+     Mosaic rows
+     ============================================================ */
+
+  .mosaic-row {
+    max-width: 1100px;
+    margin: 1.25rem auto;
+    padding: 0 1.5rem;
+    gap: 0.75rem;
+  }
+
+  .mosaic-row--1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .mosaic-row--1:has(.tile--large:only-child) {
+    grid-template-columns: 1fr;
+  }
+
+  .mosaic-row--2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .mosaic-row--3 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .mosaic-row__stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .mosaic-row__stack:has(> :only-child) {
+    grid-template-rows: 1fr;
+  }
+
+  /* ============================================================
+     Tile shared styles
+     ============================================================ */
+
+  .tile {
+    position: relative;
+    display: block;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+
+  .tile:hover {
+    transform: translateY(-2px);
+  }
+
+  .tile__bg {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklch, var(--column-500) 30%, var(--color-bg-elevated));
+    border: 1px solid var(--column-600);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  .tile:hover .tile__bg {
+    background: color-mix(in oklch, var(--column-500) 45%, var(--color-bg-elevated));
+  }
+
+  .tile__content {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .tile__content--center {
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.4rem;
+  }
+
+  .tile__pill {
+    align-self: flex-start;
+    padding: 0.2rem 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--column-100);
+    background: color-mix(in oklch, var(--column-500) 50%, transparent);
+    border: 1px solid var(--column-500);
+    border-radius: 999px;
+  }
+
+  .tile__title {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .tile__title--sm {
+    font-size: 19px;
+    line-height: 1.25;
+  }
+
+  .tile__title--xs {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .tile__deck {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  /* Aspect ratios per row */
+  .tile--large { aspect-ratio: 4 / 3; }
+  .tile--small { aspect-ratio: 16 / 9; }
+  .tile--medium { aspect-ratio: 3 / 4; }
+  .tile--square { aspect-ratio: 1 / 1; }
+
+  /* Archive view-all tile — dashed structural border, distinct from
+     column tiles. */
+  .tile--archive .tile__bg {
+    background: var(--color-bg-elevated);
+    border: 1px dashed var(--color-border);
+  }
+
+  .tile--archive:hover .tile__bg {
+    background: color-mix(in oklch, var(--color-bg-elevated) 80%, var(--color-structural-500));
+    border-color: var(--color-structural-400);
+  }
+
+  .tile__archive-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+
+  .tile__archive-cta {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 768px) {
+    .feature__overlay {
+      bottom: 1rem;
+      left: 2rem;
+      right: 2rem;
+      padding: 1.25rem;
+    }
+    .feature__title {
+      font-size: 26px;
+    }
+    .mosaic-row--1 {
+      grid-template-columns: 1fr;
+    }
+    .mosaic-row--2 {
+      grid-template-columns: 1fr;
+    }
+    .mosaic-row--3 {
+      grid-template-columns: 1fr 1fr;
+    }
+    .tile--large {
+      aspect-ratio: 4 / 3;
+    }
+    .mosaic-row__stack {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+    }
+  }
+</style>

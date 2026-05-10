@@ -1,0 +1,452 @@
+---
+import {
+  PHASE_ORDER,
+  PHASE_LABELS,
+  PHASE_WEIGHTS,
+  COMMUNITY_CUSTODY_START,
+  COMMUNITY_CUSTODY_END,
+  type MemoirEntry,
+} from '../../lib/memoir-spine';
+import type { Phase } from '../../content.config';
+
+interface Props {
+  postsByPhase: Record<Phase, MemoirEntry[]>;
+}
+
+const { postsByPhase } = Astro.props;
+
+// Empty-phase placeholder copy (per spec: bracketed scope description).
+const EMPTY_PHASE_COPY: Record<Phase, string> = {
+  jail: '[ Posts on intake, processing, and the first weeks of holding ]',
+  shelton: '[ Posts on reception, classification, and the wait ]',
+  'coyote-ridge': '[ Posts on programming, mail, and the long middle ]',
+  monroe: '[ Posts on transfer, work, and the years of routine ]',
+  'community-custody': '[ Posts on release, transition, and re-entry ]',
+};
+
+// "I am here" position within the community-custody block.
+const today = new Date();
+const ratio = Math.max(
+  0,
+  Math.min(
+    1,
+    (today.getTime() - COMMUNITY_CUSTODY_START.getTime()) /
+      (COMMUNITY_CUSTODY_END.getTime() - COMMUNITY_CUSTODY_START.getTime()),
+  ),
+);
+const iAmHerePosition = `${(ratio * 100).toFixed(1)}%`;
+const iAmHereDate = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+}).format(today);
+
+const dateLabel = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(d);
+---
+
+<div class="spine" data-column="memoir">
+  {
+    PHASE_ORDER.map((phase) => {
+      const posts = postsByPhase[phase];
+      const weight = PHASE_WEIGHTS[phase];
+      const isCommunityCustody = phase === 'community-custody';
+
+      return (
+        <section
+          class="phase"
+          id={`phase-${phase}`}
+          style={`--weight: ${weight};`}
+          data-phase={phase}
+        >
+          <div class="phase__head">
+            <div class="phase__marker" aria-hidden="true" />
+            <h2 class="phase__name">{PHASE_LABELS[phase]}</h2>
+            <p class="phase__count">
+              {posts.length === 0
+                ? 'Forthcoming'
+                : `${posts.length} piece${posts.length === 1 ? '' : 's'}`}
+            </p>
+          </div>
+
+          <div class="phase__body">
+            {posts.length === 0 && (
+              <article class={`spine-card spine-card--placeholder spine-card--right`}>
+                <div class="spine-card__connector" aria-hidden="true" />
+                <div class="spine-card__inner">
+                  <p class="spine-card__placeholder-title">
+                    {EMPTY_PHASE_COPY[phase]}
+                  </p>
+                  <p class="spine-card__placeholder-status">Forthcoming</p>
+                </div>
+              </article>
+            )}
+
+            {posts.map((post, i) => {
+              const side = i % 2 === 0 ? 'right' : 'left';
+              return (
+                <a
+                  class={`spine-card spine-card--${side}`}
+                  href={`/memoir/${post.id}`}
+                >
+                  <div class="spine-card__connector" aria-hidden="true" />
+                  <div class="spine-card__inner">
+                    <p class="spine-card__eyebrow">
+                      {dateLabel(post.data.experienceDate)}
+                    </p>
+                    <h3 class="spine-card__title">{post.data.title}</h3>
+                    {post.data.deck && (
+                      <p class="spine-card__deck">{post.data.deck}</p>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
+
+            {isCommunityCustody && (
+              <div
+                class="i-am-here"
+                style={`--position: ${iAmHerePosition};`}
+                aria-label={`Currently here, ${iAmHereDate}`}
+              >
+                <span class="i-am-here__pulse" aria-hidden="true" />
+                <span class="i-am-here__label">[ I am here. ]</span>
+                <span class="i-am-here__date">{iAmHereDate}</span>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    })
+  }
+</div>
+
+<style>
+  .spine {
+    position: relative;
+    max-width: 720px;
+    margin: 3rem auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* Vertical 2px coral spine line, with gradient fade at top + bottom. */
+  .spine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--color-memoir-400) 4%,
+      var(--color-memoir-400) 96%,
+      transparent 100%
+    );
+    transform: translateX(-1px);
+    z-index: 0;
+  }
+
+  /* ============================================================
+     Phase block — min-height proportional to PHASE_WEIGHTS so
+     duration is communicated via vertical real estate. Posts are
+     space-around inside the body so empty space surrounds them.
+     ============================================================ */
+
+  .phase {
+    --weight: 1;
+    --baseline: 180px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(var(--weight) * var(--baseline));
+    scroll-margin-top: 6rem;
+  }
+
+  .phase__head {
+    position: relative;
+    flex: 0 0 auto;
+    padding-top: 1.5rem;
+    text-align: center;
+    z-index: 2;
+  }
+
+  .phase__marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-memoir-400);
+    border: 4px solid var(--color-bg);
+    margin: 0 auto;
+    box-shadow: 0 0 0 1px var(--color-memoir-500);
+  }
+
+  .phase__name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin: 0.6rem 0 0.15rem;
+  }
+
+  .phase__count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+
+  .phase__body {
+    flex: 1 1 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 2rem 0;
+    gap: 1rem;
+    min-height: 120px;
+  }
+
+  /* ============================================================
+     Spine card — alternating left/right of the spine, connected
+     by a horizontal connector line + dot at the spine intersection.
+     ============================================================ */
+
+  .spine-card {
+    position: relative;
+    width: 45%;
+    padding: 1.25rem 1.25rem;
+    background: color-mix(in oklch, var(--color-memoir-500) 18%, var(--color-bg-elevated));
+    border: 1px solid var(--color-memoir-600);
+    border-radius: 4px;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+    z-index: 1;
+  }
+
+  .spine-card:hover {
+    transform: translateY(-1px);
+    background: color-mix(in oklch, var(--color-memoir-500) 28%, var(--color-bg-elevated));
+  }
+
+  .spine-card--right {
+    margin-left: 55%;
+  }
+
+  .spine-card--left {
+    margin-right: 55%;
+  }
+
+  /* Connector line + dot at spine intersection */
+  .spine-card__connector {
+    position: absolute;
+    top: 50%;
+    width: 11.1%; /* fills the gap between card edge and spine */
+    height: 1.5px;
+    background: var(--color-memoir-500);
+    transform: translateY(-50%);
+  }
+
+  .spine-card--right .spine-card__connector {
+    right: 100%;
+  }
+
+  .spine-card--left .spine-card__connector {
+    left: 100%;
+  }
+
+  .spine-card__connector::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-memoir-400);
+    border: 2px solid var(--color-bg);
+    transform: translate(-50%, -50%);
+  }
+
+  .spine-card--right .spine-card__connector::after {
+    left: 0;
+  }
+
+  .spine-card--left .spine-card__connector::after {
+    left: 100%;
+  }
+
+  /* Card content */
+  .spine-card__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-memoir-200);
+    margin: 0 0 0.4rem;
+  }
+
+  .spine-card__title {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 0.3rem;
+  }
+
+  .spine-card__deck {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  /* Empty-phase placeholder card */
+  .spine-card--placeholder {
+    background: transparent;
+    border: 1px dashed var(--color-memoir-600);
+    opacity: 0.5;
+  }
+
+  .spine-card--placeholder:hover {
+    transform: none;
+    background: transparent;
+  }
+
+  .spine-card__placeholder-title {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+    margin: 0 0 0.4rem;
+  }
+
+  .spine-card__placeholder-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+
+  /* ============================================================
+     "I am here" marker — pulse at the current real-world position
+     within the community-custody phase. Reduced motion falls back
+     to a static glow.
+     ============================================================ */
+
+  .i-am-here {
+    position: absolute;
+    top: var(--position, 71%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    z-index: 5;
+  }
+
+  .i-am-here__pulse {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-memoir-200);
+    box-shadow:
+      0 0 0 6px color-mix(in oklch, var(--color-memoir-200) 30%, transparent),
+      0 0 0 14px color-mix(in oklch, var(--color-memoir-200) 12%, transparent);
+    animation: i-am-here-pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes i-am-here-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.18); opacity: 0.85; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .i-am-here__pulse {
+      animation: none;
+      box-shadow:
+        0 0 0 8px color-mix(in oklch, var(--color-memoir-200) 25%, transparent),
+        0 0 0 18px color-mix(in oklch, var(--color-memoir-200) 10%, transparent);
+    }
+  }
+
+  .i-am-here__label {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--color-memoir-100);
+    white-space: nowrap;
+    text-shadow: 0 1px 6px var(--color-bg);
+  }
+
+  .i-am-here__date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-memoir-200);
+    white-space: nowrap;
+  }
+
+  /* ============================================================
+     Mobile — alternating cards collapse to a single column
+     on narrow viewports, with the spine line shifted to the left
+     edge to free up reading width.
+     ============================================================ */
+
+  @media (max-width: 640px) {
+    .spine {
+      padding-left: 2.5rem;
+      padding-right: 1rem;
+    }
+
+    .spine::before {
+      left: 1.5rem;
+    }
+
+    .phase__head {
+      text-align: left;
+      padding-left: 0;
+    }
+
+    .phase__marker {
+      margin: 0;
+      margin-left: -25px;
+    }
+
+    .phase__name,
+    .phase__count {
+      text-align: left;
+    }
+
+    .spine-card,
+    .spine-card--right,
+    .spine-card--left {
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .spine-card__connector {
+      display: none;
+    }
+
+    .i-am-here {
+      left: 1.5rem;
+      align-items: flex-start;
+      transform: translate(-50%, -50%);
+    }
+
+    .i-am-here__label,
+    .i-am-here__date {
+      margin-left: 1.5rem;
+    }
+  }
+</style>

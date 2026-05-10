@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TopNav from '../../components/chrome/TopNav.astro';
+import NewsletterPrompt from '../../components/chrome/NewsletterPrompt.astro';
+import ColumnHeader from '../../components/column-landing/ColumnHeader.astro';
+import ColumnSubscribePrompt from '../../components/column-landing/ColumnSubscribePrompt.astro';
+import MemoirMiniSpine from '../../components/column-landing/MemoirMiniSpine.astro';
+import MemoirSpine from '../../components/column-landing/MemoirSpine.astro';
+import { getCollection } from 'astro:content';
+import { groupByPhase } from '../../lib/memoir-spine';
+import { COLUMNS } from '../../lib/columns';
+import { COLUMN_EMPTY_STATES } from '../../lib/column-landing';
+
+const meta = COLUMNS.memoir;
+const empty = COLUMN_EMPTY_STATES.memoir;
+const all = await getCollection('memoir');
+const postsByPhase = groupByPhase(all);
+const isEmpty = all.length === 0;
+---
+
+<BaseLayout title={`${meta.name} — Sentence Structure`} description={meta.deck}>
+  <div data-column="memoir">
+    <TopNav />
+
+    <ColumnHeader column="memoir" manifesto={isEmpty ? empty.manifesto : undefined}>
+      <MemoirMiniSpine slot="below-deck" postsByPhase={postsByPhase} />
+    </ColumnHeader>
+
+    <MemoirSpine postsByPhase={postsByPhase} />
+
+    {!isEmpty && <NewsletterPrompt />}
+    {isEmpty && <ColumnSubscribePrompt column="memoir" />}
+  </div>
+</BaseLayout>

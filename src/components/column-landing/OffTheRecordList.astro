@@ -1,0 +1,220 @@
+---
+import { getCollection, render } from 'astro:content';
+import PullQuote from '../post/PullQuote.astro';
+import Sidenote from '../post/Sidenote.astro';
+import Stat from '../post/Stat.astro';
+import BlockQuote from '../post/BlockQuote.astro';
+import Figure from '../post/Figure.astro';
+import { extractFirstLine } from '../../lib/content';
+
+const posts = (await getCollection('off-the-record')).sort(
+  (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime(),
+);
+
+const rendered = await Promise.all(
+  posts.map(async (post) => {
+    const { Content } = await render(post);
+    const firstLine = post.data.title.trim()
+      ? null
+      : extractFirstLine(post.body ?? '');
+    return { post, Content, firstLine };
+  }),
+);
+
+const isEmpty = rendered.length === 0;
+
+const dateLabel = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(d);
+---
+
+<section class="otr-list" data-column="off-the-record" aria-label="Pieces">
+  {
+    isEmpty && (
+      <article class="otr-entry otr-entry--placeholder">
+        <div class="otr-entry__eyebrow">
+          <span class="otr-entry__date">Forthcoming</span>
+        </div>
+        <h2 class="otr-entry__title otr-entry__title--untitled">
+          [ ~12 lines / free verse / on the silence after intake ]
+        </h2>
+        <pre class="otr-entry__placeholder-verse">{`[ first line ]
+[ second line ]
+[ third line ]
+[ fourth line ]
+[ ... ]
+[ closing line ]`}</pre>
+        <p class="otr-entry__placeholder-status">Forthcoming</p>
+      </article>
+    )
+  }
+
+  {
+    rendered.map(({ post, Content, firstLine }, i) => (
+      <article class="otr-entry">
+        <header class="otr-entry__eyebrow">
+          <time
+            class="otr-entry__date"
+            datetime={post.data.publishedDate.toISOString()}
+          >
+            {dateLabel(post.data.publishedDate)}
+          </time>
+          {post.data.tags.length > 0 && (
+            <span class="otr-entry__tags">
+              {post.data.tags.map((tag, j) => (
+                <span>
+                  {j > 0 && <span class="otr-entry__tag-sep"> · </span>}
+                  {tag}
+                </span>
+              ))}
+            </span>
+          )}
+        </header>
+
+        {post.data.title.trim() ? (
+          <h2 class="otr-entry__title">
+            <a href={`/off-the-record/${post.id}`}>{post.data.title}</a>
+          </h2>
+        ) : (
+          <h2 class="otr-entry__title otr-entry__title--untitled">
+            <a href={`/off-the-record/${post.id}`}>{firstLine}</a>
+          </h2>
+        )}
+
+        <div class="otr-entry__body">
+          <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+        </div>
+
+        {i < rendered.length - 1 && (
+          <div class="otr-asterism" aria-hidden="true">
+            ⁂
+          </div>
+        )}
+      </article>
+    ))
+  }
+</section>
+
+<style>
+  .otr-list {
+    max-width: 520px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .otr-entry + .otr-entry {
+    margin-top: 0;
+  }
+
+  .otr-entry__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .otr-entry__date {
+    color: var(--column-200);
+    text-transform: uppercase;
+  }
+
+  .otr-entry__tags {
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0;
+  }
+
+  .otr-entry__tag-sep {
+    color: var(--color-text-tertiary);
+  }
+
+  .otr-entry__title {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0 0 1rem;
+  }
+
+  .otr-entry__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .otr-entry__title a:hover {
+    color: var(--column-200);
+  }
+
+  .otr-entry__title--untitled {
+    font-style: italic;
+  }
+
+  /* Verse body — same family as text-body, tighter leading (1.45). */
+  .otr-entry__body {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--color-text);
+  }
+
+  .otr-entry__body :global(p) {
+    margin: 0 0 1rem;
+  }
+
+  .otr-entry__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .otr-entry__body :global(strong) {
+    font-weight: 600;
+  }
+
+  .otr-entry__body :global(em) {
+    font-style: italic;
+  }
+
+  /* Asterism separator — chapbook convention. */
+  .otr-asterism {
+    text-align: center;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--column-400);
+    margin: 5rem 0;
+    user-select: none;
+  }
+
+  /* Empty-state placeholder entry. */
+  .otr-entry--placeholder {
+    border: 1px dashed var(--column-600);
+    background: color-mix(in oklch, var(--column-500) 8%, transparent);
+    border-radius: 4px;
+    padding: 1.75rem;
+    opacity: 0.85;
+  }
+
+  .otr-entry__placeholder-verse {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 1rem;
+    white-space: pre-wrap;
+  }
+
+  .otr-entry__placeholder-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+</style>
