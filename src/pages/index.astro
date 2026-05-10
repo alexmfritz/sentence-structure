@@ -80,25 +80,19 @@ const { hero, anchorRow, showcase, archiveSampler, isSparse } =
     letter-spacing: -0.01em;
     color: var(--color-text);
     text-decoration: none;
-    background: oklch(0.13 0.005 280 / 0.5);
-    backdrop-filter: blur(14px);
-    border: 1px solid oklch(0.95 0.005 280 / 0.12);
+    background: var(--glass-floating);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: 999px;
     padding: 0.5rem 0.95rem;
     transition: background 0.15s ease;
   }
 
   .home-header__wordmark:hover {
-    background: oklch(0.18 0.005 280 / 0.7);
+    background: var(--glass-floating-hover);
   }
 
-  @media (prefers-reduced-transparency: reduce) {
-    .home-header__wordmark {
-      background: var(--color-bg-elevated);
-      backdrop-filter: none;
-      border-color: var(--color-border);
-    }
-  }
+  /* prefers-reduced-transparency handled globally in global.css. */
 
   main {
     position: relative;

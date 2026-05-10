@@ -87,9 +87,9 @@ import { COLUMNS_LIST } from '../../lib/columns';
     width: 44px;
     height: 44px;
     padding: 0;
-    background: oklch(0.15 0.005 280 / 0.55);
-    backdrop-filter: blur(14px);
-    border: 1px solid oklch(0.95 0.005 280 / 0.18);
+    background: var(--glass-trigger);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border-strong);
     border-radius: 999px;
     cursor: pointer;
     display: flex;
@@ -119,8 +119,8 @@ import { COLUMNS_LIST } from '../../lib/columns';
   .hamburger__panel {
     position: fixed;
     inset: 0;
-    background: oklch(0.10 0.005 280 / 0.96);
-    backdrop-filter: blur(20px);
+    background: var(--glass-panel);
+    backdrop-filter: var(--glass-blur-strong);
     padding: 5rem 2rem 2rem;
     overflow-y: auto;
     opacity: 0;
@@ -175,19 +175,7 @@ import { COLUMNS_LIST } from '../../lib/columns';
   .hamburger__nav li[data-column='off-the-record'] a:hover  { border-bottom-color: var(--color-off-the-record-400); }
   .hamburger__nav li[data-column='protective-factors'] a:hover { border-bottom-color: var(--color-protective-factors-400); }
 
-  @media (prefers-reduced-transparency: reduce) {
-    .hamburger__trigger,
-    .hamburger__panel {
-      backdrop-filter: none;
-    }
-    .hamburger__trigger {
-      background: var(--color-bg-elevated);
-      border-color: var(--color-border);
-    }
-    .hamburger__panel {
-      background: var(--color-bg);
-    }
-  }
+  /* prefers-reduced-transparency handled globally in global.css. */
 
   @media (min-width: 769px) {
     .hamburger {

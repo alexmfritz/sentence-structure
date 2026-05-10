@@ -57,9 +57,9 @@ const href = `/memoir/${post.id}`;
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
-    background: oklch(0.13 0.005 280 / 0.55);
-    backdrop-filter: blur(22px) saturate(120%);
-    border: 1px solid oklch(0.95 0.005 280 / 0.12);
+    background: var(--glass-floating);
+    backdrop-filter: var(--glass-blur-strong);
+    border: 1px solid var(--glass-border);
     border-radius: 4px;
     color: var(--color-text);
     text-decoration: none;
@@ -67,7 +67,7 @@ const href = `/memoir/${post.id}`;
   }
 
   .hero__glass:hover {
-    background: oklch(0.16 0.005 280 / 0.7);
+    background: var(--glass-floating-hover);
     transform: translateY(-2px);
   }
 
@@ -90,7 +90,7 @@ const href = `/memoir/${post.id}`;
     font-size: 18px;
     line-height: 1.45;
     font-style: italic;
-    color: oklch(0.92 0.005 280);
+    color: var(--color-text);
     margin: 0;
     max-width: 42ch;
   }
@@ -115,11 +115,5 @@ const href = `/memoir/${post.id}`;
     }
   }
 
-  @media (prefers-reduced-transparency: reduce) {
-    .hero__glass {
-      background: var(--color-bg-elevated);
-      backdrop-filter: none;
-      border-color: var(--color-border);
-    }
-  }
+  /* prefers-reduced-transparency handled globally in global.css. */
 </style>
