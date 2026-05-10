@@ -1,0 +1,155 @@
+---
+import {
+  PHASE_ORDER,
+  PHASE_LABELS,
+  COMMUNITY_CUSTODY_START,
+  COMMUNITY_CUSTODY_END,
+  type MemoirEntry,
+} from '../../lib/memoir-spine';
+import type { Phase } from '../../content.config';
+
+interface Props {
+  postsByPhase: Record<Phase, MemoirEntry[]>;
+}
+
+const { postsByPhase } = Astro.props;
+
+const today = new Date();
+const isCurrentPhase = (phase: Phase): boolean => {
+  if (phase !== 'community-custody') return false;
+  const t = today.getTime();
+  return t >= COMMUNITY_CUSTODY_START.getTime() && t <= COMMUNITY_CUSTODY_END.getTime();
+};
+---
+
+<nav class="mini-spine" data-column="memoir" aria-label="Phase navigation">
+  <ol class="mini-spine__list">
+    {
+      PHASE_ORDER.map((phase) => {
+        const count = postsByPhase[phase].length;
+        const active = isCurrentPhase(phase);
+        return (
+          <li class:list={['mini-spine__item', active && 'mini-spine__item--active']}>
+            <a href={`#phase-${phase}`}>
+              <span class="mini-spine__marker" aria-hidden="true">
+                {active && <span class="mini-spine__halo" aria-hidden="true" />}
+              </span>
+              <span class="mini-spine__label">{PHASE_LABELS[phase]}</span>
+              <span class="mini-spine__count">
+                {count > 0 ? `${count} piece${count === 1 ? '' : 's'}` : '—'}
+              </span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
+
+<style>
+  .mini-spine {
+    margin: 0 auto;
+    padding: 1.5rem 0 0;
+    max-width: 720px;
+  }
+
+  .mini-spine__list {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* horizontal connecting line */
+  .mini-spine__list::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-memoir-500) 8%,
+      var(--color-memoir-500) 92%,
+      transparent 100%
+    );
+    z-index: 0;
+  }
+
+  .mini-spine__item a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.5rem;
+    text-decoration: none;
+    color: var(--color-text);
+    z-index: 1;
+  }
+
+  .mini-spine__marker {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-memoir-400);
+    border: 3px solid var(--color-bg);
+    box-shadow: 0 0 0 1px var(--color-memoir-500);
+  }
+
+  .mini-spine__item--active .mini-spine__marker {
+    background: var(--color-memoir-200);
+  }
+
+  .mini-spine__halo {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: color-mix(in oklch, var(--color-memoir-200) 35%, transparent);
+    animation: mini-spine-pulse 2.5s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mini-spine__halo {
+      animation: none;
+    }
+  }
+
+  @keyframes mini-spine-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.25); opacity: 0.3; }
+  }
+
+  .mini-spine__label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+    text-align: center;
+  }
+
+  .mini-spine__count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+  }
+
+  .mini-spine__item a:hover .mini-spine__label {
+    color: var(--color-memoir-200);
+  }
+
+  @media (max-width: 640px) {
+    .mini-spine__label {
+      font-size: 10px;
+    }
+    .mini-spine__count {
+      font-size: 10px;
+    }
+  }
+</style>

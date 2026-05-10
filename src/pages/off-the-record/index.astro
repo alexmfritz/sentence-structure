@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TopNav from '../../components/chrome/TopNav.astro';
+import NewsletterPrompt from '../../components/chrome/NewsletterPrompt.astro';
+import ColumnHeader from '../../components/column-landing/ColumnHeader.astro';
+import ColumnSubscribePrompt from '../../components/column-landing/ColumnSubscribePrompt.astro';
+import OffTheRecordList from '../../components/column-landing/OffTheRecordList.astro';
+import { getCollection } from 'astro:content';
+import { COLUMNS } from '../../lib/columns';
+import { COLUMN_EMPTY_STATES } from '../../lib/column-landing';
+
+const meta = COLUMNS['off-the-record'];
+const empty = COLUMN_EMPTY_STATES['off-the-record'];
+const posts = await getCollection('off-the-record');
+const isEmpty = posts.length === 0;
+---
+
+<BaseLayout title={`${meta.name} — Sentence Structure`} description={meta.deck}>
+  <div data-column="off-the-record">
+    <TopNav />
+
+    <ColumnHeader
+      column="off-the-record"
+      manifesto={isEmpty ? empty.manifesto : undefined}
+    />
+
+    <OffTheRecordList />
+
+    {!isEmpty && <NewsletterPrompt />}
+    {isEmpty && <ColumnSubscribePrompt column="off-the-record" />}
+  </div>
+</BaseLayout>

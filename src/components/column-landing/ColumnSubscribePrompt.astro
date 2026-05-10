@@ -1,0 +1,123 @@
+---
+import { COLUMNS, type ColumnSlug } from '../../lib/columns';
+
+interface Props {
+  column: ColumnSlug;
+}
+
+const { column } = Astro.props;
+const meta = COLUMNS[column];
+---
+
+<aside class="column-subscribe" data-column={column}>
+  <p class="column-subscribe__eyebrow">Coming soon</p>
+  <h2 class="column-subscribe__heading">
+    Be notified when {meta.name} begins
+  </h2>
+  <p class="column-subscribe__deck">
+    A short note when the first piece publishes. No promotion, no list resale, no other publications.
+  </p>
+
+  <form class="column-subscribe__form" onsubmit="return false;" aria-label={`${meta.name} subscribe`}>
+    <label class="column-subscribe__label" for={`${column}-email`}>Email address</label>
+    <div class="column-subscribe__row">
+      <input
+        id={`${column}-email`}
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
+      <button type="submit">Subscribe</button>
+    </div>
+  </form>
+</aside>
+
+<style>
+  .column-subscribe {
+    max-width: 480px;
+    margin: 4rem auto;
+    padding: 2rem 1.75rem;
+    border: 1px solid var(--column-600);
+    background: color-mix(in oklch, var(--column-500) 14%, var(--color-bg-elevated));
+    border-radius: 4px;
+  }
+
+  .column-subscribe__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--column-200);
+    margin: 0 0 0.5rem;
+  }
+
+  .column-subscribe__heading {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    line-height: 1.25;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0 0 0.5rem;
+    max-width: 22ch;
+  }
+
+  .column-subscribe__deck {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.45;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0 0 1.25rem;
+    max-width: 38ch;
+  }
+
+  .column-subscribe__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .column-subscribe__row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .column-subscribe__row input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.625rem 0.875rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+  }
+
+  .column-subscribe__row input:focus {
+    outline: none;
+    border-color: var(--column-300);
+  }
+
+  .column-subscribe__row button {
+    padding: 0.625rem 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    background: var(--column-400);
+    border: 1px solid var(--column-300);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .column-subscribe__row button:hover {
+    background: var(--column-300);
+  }
+</style>
