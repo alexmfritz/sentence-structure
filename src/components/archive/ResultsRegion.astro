@@ -1,0 +1,246 @@
+---
+import { COLUMNS } from '../../lib/columns';
+import type { ArchiveEntry } from '../../lib/archive';
+import { PAGE_SIZE } from '../../lib/archive';
+
+interface Props {
+  entries: ArchiveEntry[];
+}
+
+const { entries } = Astro.props;
+
+const dateLabel = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(d);
+
+const totalAcrossPages = entries.length;
+const initialVisible = Math.min(PAGE_SIZE, totalAcrossPages);
+---
+
+<div class="results-region">
+  <p class="results-region__counter" data-results-counter>
+    <span data-results-shown>{initialVisible}</span> of
+    <span data-results-total>{totalAcrossPages}</span> pieces
+  </p>
+
+  <div class="archive-grid" role="list" data-archive-grid>
+    {
+      entries.map((entry, i) => (
+        <a
+          class="archive-tile"
+          href={entry.url}
+          data-column={entry.collection}
+          data-tags={entry.tags.join(',')}
+          data-year={entry.year}
+          data-published={entry.publishedDate.toISOString()}
+          data-experience={entry.experienceDate?.toISOString() ?? ''}
+          data-phase={entry.phase ?? ''}
+          data-page-hidden={i >= PAGE_SIZE ? 'true' : 'false'}
+          role="listitem"
+        >
+          <div class="archive-tile__bg" aria-hidden="true" />
+          <div class="archive-tile__content">
+            <span class="archive-tile__pill">{COLUMNS[entry.collection].name}</span>
+            <h3 class="archive-tile__title">
+              {entry.title || '[ untitled ]'}
+            </h3>
+            <time
+              class="archive-tile__date"
+              datetime={entry.publishedDate.toISOString()}
+            >
+              {dateLabel(entry.publishedDate)}
+            </time>
+            {entry.excerpt && (
+              <p class="archive-tile__excerpt">{entry.excerpt}</p>
+            )}
+          </div>
+        </a>
+      ))
+    }
+  </div>
+
+  <button
+    type="button"
+    class="results-region__more"
+    data-load-more
+    hidden={totalAcrossPages <= PAGE_SIZE}
+  >
+    Load more
+  </button>
+</div>
+
+<style>
+  .results-region {
+    max-width: 1100px;
+    margin: 1rem auto 3rem;
+    padding: 0 1.5rem;
+  }
+
+  .results-region__counter {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-text-tertiary);
+    margin: 0 0 1rem;
+  }
+
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .archive-tile {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+
+  .archive-tile:hover {
+    transform: translateY(-2px);
+  }
+
+  .archive-tile[data-page-hidden='true'],
+  .archive-tile[data-filtered-out='true'] {
+    display: none;
+  }
+
+  /* Per-column background tinting — uses color tokens directly
+     since data-column lives on each tile. */
+  .archive-tile[data-column='memoir'] .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-memoir-500) 22%, var(--color-bg-elevated));
+    border: 1px solid var(--color-memoir-600);
+  }
+  .archive-tile[data-column='memoir']:hover .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-memoir-500) 36%, var(--color-bg-elevated));
+  }
+  .archive-tile[data-column='concrete-truths'] .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-concrete-truths-500) 22%, var(--color-bg-elevated));
+    border: 1px solid var(--color-concrete-truths-600);
+  }
+  .archive-tile[data-column='concrete-truths']:hover .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-concrete-truths-500) 36%, var(--color-bg-elevated));
+  }
+  .archive-tile[data-column='economics-of'] .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-economics-of-500) 22%, var(--color-bg-elevated));
+    border: 1px solid var(--color-economics-of-600);
+  }
+  .archive-tile[data-column='economics-of']:hover .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-economics-of-500) 36%, var(--color-bg-elevated));
+  }
+  .archive-tile[data-column='off-the-record'] .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-off-the-record-500) 22%, var(--color-bg-elevated));
+    border: 1px solid var(--color-off-the-record-600);
+  }
+  .archive-tile[data-column='off-the-record']:hover .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-off-the-record-500) 36%, var(--color-bg-elevated));
+  }
+  .archive-tile[data-column='protective-factors'] .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-protective-factors-500) 22%, var(--color-bg-elevated));
+    border: 1px solid var(--color-protective-factors-600);
+  }
+  .archive-tile[data-column='protective-factors']:hover .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-protective-factors-500) 36%, var(--color-bg-elevated));
+  }
+
+  .archive-tile__bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  .archive-tile__content {
+    position: relative;
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+  }
+
+  .archive-tile__pill {
+    align-self: flex-start;
+    padding: 0.2rem 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    /* Each per-column rule below sets color; pill inherits. */
+  }
+
+  .archive-tile[data-column='memoir'] .archive-tile__pill { color: var(--color-memoir-100); border-color: var(--color-memoir-500); }
+  .archive-tile[data-column='concrete-truths'] .archive-tile__pill { color: var(--color-concrete-truths-100); border-color: var(--color-concrete-truths-500); }
+  .archive-tile[data-column='economics-of'] .archive-tile__pill { color: var(--color-economics-of-100); border-color: var(--color-economics-of-500); }
+  .archive-tile[data-column='off-the-record'] .archive-tile__pill { color: var(--color-off-the-record-100); border-color: var(--color-off-the-record-500); }
+  .archive-tile[data-column='protective-factors'] .archive-tile__pill { color: var(--color-protective-factors-100); border-color: var(--color-protective-factors-500); }
+
+  .archive-tile__title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .archive-tile__date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+  }
+
+  .archive-tile__excerpt {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+  }
+
+  .results-region__more {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 0.7rem 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .results-region__more:hover {
+    border-color: var(--color-text-tertiary);
+  }
+
+  @media (max-width: 1024px) {
+    .archive-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .archive-grid {
+      grid-template-columns: 1fr;
+    }
+    .archive-tile {
+      aspect-ratio: 2 / 1;
+    }
+  }
+</style>
