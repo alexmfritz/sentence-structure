@@ -10,15 +10,20 @@ Personal blog about the prison experience. Five columns: Memoir, Concrete Truths
 
 Direct, honest, willing to push back. Evaluate Alex's proposals on the merits and tell him when something will not work or when there's a better approach. **Do not flatter, do not hedge.** Decisions stay small and sequential — one question, one answer, move on. Drift caught early is a stated value. Treat Alex as a technical peer (CIS Web Developer Certificate from Edmonds College, strong TypeScript / Tailwind / modern React preferences); skip explanations of standard patterns.
 
-## Canonical specs (NOT in this repo)
+## Canonical specs (in this repo, under `docs/`)
 
-Three documents live in Alex's Claude.ai Project workspace, not on the local filesystem:
+The three canonical specs live in `docs/` so any session can read them directly:
 
-1. **Foundational Context Documentation** — design system, IA, column structure, treatments, typographic system, page IA for every page type
-2. **Placeholder Content Documentation** — the 16 placeholder pieces + lorem-convention examples
-3. **Claude Code Handoff** — engineering bridge: file structure, schemas, Tailwind v4 @theme starter, build phase order, gotchas
+1. **`docs/foundational-context.md`** — design system, IA, column structure, treatments, typographic system, page IA for every page type
+2. **`docs/placeholder-content.md`** — the 16 placeholder pieces + lorem-convention examples
+3. **`docs/claude-code-handoff.md`** — engineering bridge: file structure, schemas, Tailwind v4 @theme starter, build phase order, gotchas, plus the Phase 1 deviations appended at the bottom
 
-When Alex references "the foundational doc" or similar, ask him to paste the relevant section into chat. Don't fabricate the content from memory.
+These docs are also maintained by Alex in his Claude.ai Project workspace; when he updates the source there, he'll re-paste into the repo. Do NOT unilaterally edit `docs/*.md` — those are spec, not implementation.
+
+For Phase 2 (post template) the most relevant sections are:
+- `docs/foundational-context.md` → TREATMENTS, POST PAGE INFORMATION ARCHITECTURE
+- `docs/claude-code-handoff.md` → Treatment implementations, Build order → Phase 2, Gotchas
+- `docs/placeholder-content.md` → all 16 pieces are the test corpus; bracket markers (`[H2:]`, `[PULL QUOTE:]`, `[SIDENOTE:]`, `[INLINE STAT IN MONO:]`) become MDX components
 
 ## Stack
 
