@@ -1,0 +1,126 @@
+---
+import { COLUMNS_LIST } from '../../lib/columns';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <section class="site-footer__group">
+      <h3 class="site-footer__heading">Columns</h3>
+      <ul>
+        {
+          COLUMNS_LIST.map((column) => (
+            <li>
+              <a href={`/${column.slug}`}>{column.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="site-footer__group">
+      <h3 class="site-footer__heading">Read</h3>
+      <ul>
+        <li><a href="/archive">Archive</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </section>
+
+    <section class="site-footer__group site-footer__group--wide">
+      <h3 class="site-footer__heading">Newsletter</h3>
+      <p>A short note when new pieces publish. No promotion, no list resale, no other publications.</p>
+    </section>
+  </div>
+
+  <div class="site-footer__base">
+    <p>&copy; {year} Sentence Structure</p>
+    <p class="site-footer__tagline">What They Don't Tell You</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 6rem;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 2rem;
+  }
+
+  .site-footer__group--wide {
+    grid-column: span 2;
+  }
+
+  .site-footer__heading {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.75rem;
+  }
+
+  .site-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .site-footer a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  .site-footer a:hover {
+    color: var(--color-text);
+  }
+
+  .site-footer__group--wide p {
+    line-height: 1.5;
+    max-width: 36ch;
+  }
+
+  .site-footer__base {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 2rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-tertiary);
+  }
+
+  .site-footer__tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .site-footer__group--wide {
+      grid-column: span 1;
+    }
+
+    .site-footer__base {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

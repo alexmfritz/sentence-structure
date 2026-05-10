@@ -1,0 +1,51 @@
+---
+interface Props {
+  caption?: string;
+  ratio?: '4:3' | '16:9' | '3:2' | '1:1';
+}
+
+const { caption, ratio = '4:3' } = Astro.props;
+const ratioClass = `fig--${ratio.replace(':', '-')}`;
+---
+
+<figure class={`fig ${ratioClass}`}>
+  <div class="fig__placeholder" aria-hidden="true">
+    <span class="fig__label">Inline image placeholder</span>
+  </div>
+  {caption && <figcaption class="fig__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .fig {
+    margin: 2rem 0;
+  }
+
+  .fig__placeholder {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: color-mix(in oklch, var(--column-500) 28%, var(--color-bg-elevated));
+    border: 1px dashed var(--column-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+  }
+
+  .fig--16-9 .fig__placeholder { aspect-ratio: 16 / 9; }
+  .fig--3-2 .fig__placeholder { aspect-ratio: 3 / 2; }
+  .fig--1-1 .fig__placeholder { aspect-ratio: 1 / 1; }
+
+  .fig__label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--column-200);
+  }
+
+  .fig__caption {
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--color-text-secondary);
+  }
+</style>

@@ -51,9 +51,12 @@ const sections = await Promise.all(
                     <span class="text-meta font-mono opacity-60">
                       {post.data.publishedDate.toISOString().slice(0, 10)}
                     </span>
-                    <span class="ml-3">
+                    <a
+                      class="ml-3 underline decoration-1 underline-offset-2 opacity-90 hover:opacity-100"
+                      href={`/${column.slug}/${post.id}`}
+                    >
                       {post.data.title || '[ untitled ]'}
-                    </span>
+                    </a>
                   </li>
                 ))}
               </ul>

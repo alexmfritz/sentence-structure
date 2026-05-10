@@ -1,0 +1,28 @@
+---
+import { PHASE_LABELS } from '../../lib/memoir-spine';
+import type { Phase } from '../../content.config';
+
+interface Props {
+  phase: Phase;
+}
+
+const { phase } = Astro.props;
+---
+
+<span class="phase-tag-pill">{PHASE_LABELS[phase]}</span>
+
+<style>
+  .phase-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.7rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--column-200);
+    background: transparent;
+    border: 1px solid var(--column-600);
+    border-radius: 999px;
+  }
+</style>

@@ -160,4 +160,70 @@
   .text-caption {
     font-style: italic;
   }
+
+  /* ============================================================
+     COLUMN THEMING via data attribute. PostLayout sets
+     data-column={slug}; components inside reference the semantic
+     --column-{stop} vars without knowing about specific columns.
+     ============================================================ */
+
+  [data-column='memoir'] {
+    --column-100: var(--color-memoir-100);
+    --column-200: var(--color-memoir-200);
+    --column-300: var(--color-memoir-300);
+    --column-400: var(--color-memoir-400);
+    --column-500: var(--color-memoir-500);
+    --column-600: var(--color-memoir-600);
+  }
+
+  [data-column='concrete-truths'] {
+    --column-100: var(--color-concrete-truths-100);
+    --column-200: var(--color-concrete-truths-200);
+    --column-300: var(--color-concrete-truths-300);
+    --column-400: var(--color-concrete-truths-400);
+    --column-500: var(--color-concrete-truths-500);
+    --column-600: var(--color-concrete-truths-600);
+  }
+
+  [data-column='economics-of'] {
+    --column-100: var(--color-economics-of-100);
+    --column-200: var(--color-economics-of-200);
+    --column-300: var(--color-economics-of-300);
+    --column-400: var(--color-economics-of-400);
+    --column-500: var(--color-economics-of-500);
+    --column-600: var(--color-economics-of-600);
+  }
+
+  [data-column='off-the-record'] {
+    --column-100: var(--color-off-the-record-100);
+    --column-200: var(--color-off-the-record-200);
+    --column-300: var(--color-off-the-record-300);
+    --column-400: var(--color-off-the-record-400);
+    --column-500: var(--color-off-the-record-500);
+    --column-600: var(--color-off-the-record-600);
+  }
+
+  [data-column='protective-factors'] {
+    --column-100: var(--color-protective-factors-100);
+    --column-200: var(--color-protective-factors-200);
+    --column-300: var(--color-protective-factors-300);
+    --column-400: var(--color-protective-factors-400);
+    --column-500: var(--color-protective-factors-500);
+    --column-600: var(--color-protective-factors-600);
+  }
+
+  /* ============================================================
+     DROP CAP — Memoir column only. Scoped by data-column on the
+     post body wrapper so other columns never inherit it.
+     ============================================================ */
+
+  .post-body[data-column='memoir'] > p:first-of-type::first-letter {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 60px;
+    line-height: 1;
+    float: left;
+    margin: 0.05em 0.12em 0 0;
+    color: var(--color-text);
+  }
 }

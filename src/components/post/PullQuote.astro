@@ -1,0 +1,23 @@
+---
+---
+
+<blockquote class="pull-quote">
+  <slot />
+</blockquote>
+
+<style>
+  .pull-quote {
+    border-left: 3px solid var(--column-400);
+    padding-left: 22px;
+    margin: 1.75rem 0;
+    font-family: var(--font-serif);
+    font-size: 28px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: var(--column-100);
+  }
+
+  .pull-quote :global(p) {
+    margin: 0;
+  }
+</style>
