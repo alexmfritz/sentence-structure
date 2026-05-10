@@ -246,27 +246,47 @@
   }
 
   /* ============================================================
-     SKIP LINK — sitewide keyboard a11y. Hidden off-screen until
-     it receives keyboard focus, then slides into view at top-left.
+     SKIP LINK — sitewide keyboard a11y. Uses the visually-hidden
+     pattern (1×1px clipped) so the element takes ZERO visual space
+     until focused, regardless of parent layout. The earlier
+     `top: -100px` approach failed under Tailwind v4 + flex parent
+     interaction. On keyboard focus the element expands to a real
+     fixed-position panel at top-left.
      Lives at the top of <body> in BaseLayout; targets <main id="main">.
      ============================================================ */
 
   .skip-link {
     position: absolute;
-    top: -100px;
-    left: 0;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
     z-index: 200;
+    width: auto;
+    height: auto;
     padding: 0.5rem 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
     background: var(--color-bg-elevated);
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: 14px;
     border: 1px solid var(--color-border);
     text-decoration: none;
-  }
-
-  .skip-link:focus-visible {
-    top: 0;
   }
 
   /* ============================================================
