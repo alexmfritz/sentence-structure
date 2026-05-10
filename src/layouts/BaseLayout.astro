@@ -21,7 +21,10 @@ const { title, description } = Astro.props;
     {description && <meta name="description" content={description} />}
   </head>
   <body class="min-h-screen flex flex-col">
-    <slot />
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main id="main">
+      <slot />
+    </main>
     <Footer />
   </body>
 </html>
