@@ -87,7 +87,7 @@ const isOffTheRecord = column === 'off-the-record';
             <ul>
               {tags.map((tag) => (
                 <li>
-                  <a href={`/archive?tag=${encodeURIComponent(tag)}`}>{tag}</a>
+                  <a href={`/archive?tags=${encodeURIComponent(tag)}`}>{tag}</a>
                 </li>
               ))}
             </ul>

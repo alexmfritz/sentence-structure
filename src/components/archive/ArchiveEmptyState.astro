@@ -1,0 +1,57 @@
+---
+interface Props {
+  mode: 'no-match' | 'threshold';
+}
+
+const { mode } = Astro.props;
+---
+
+{
+  mode === 'threshold' ? (
+    <div class="archive-empty archive-empty--threshold" data-archive-empty>
+      <p class="archive-empty__message">
+        The archive activates once a few posts have been published. In the
+        meantime, browse by column from the navigation.
+      </p>
+    </div>
+  ) : (
+    <div class="archive-empty archive-empty--no-match" data-archive-empty hidden>
+      <p class="archive-empty__message">No posts match these filters.</p>
+      <button type="button" class="archive-empty__clear" data-clear-filters>
+        Clear filters
+      </button>
+    </div>
+  )
+}
+
+<style>
+  .archive-empty {
+    max-width: 720px;
+    margin: 4rem auto;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+
+  .archive-empty__message {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  .archive-empty__clear {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .archive-empty__clear:hover {
+    border-color: var(--color-text-tertiary);
+  }
+</style>

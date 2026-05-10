@@ -1,0 +1,348 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TopNav from '../components/chrome/TopNav.astro';
+import NewsletterPrompt from '../components/chrome/NewsletterPrompt.astro';
+import FilterChrome from '../components/archive/FilterChrome.astro';
+import ResultsRegion from '../components/archive/ResultsRegion.astro';
+import ArchiveEmptyState from '../components/archive/ArchiveEmptyState.astro';
+import { getArchiveData } from '../lib/archive';
+
+const archive = await getArchiveData();
+---
+
+<BaseLayout
+  title="Archive — Sentence Structure"
+  description="Find pieces by column, tag, year, or phase across the publication."
+>
+  <TopNav />
+
+  <article class="archive">
+    <header class="archive__header">
+      <p class="archive__eyebrow">Archive</p>
+      <h1 class="archive__title">Archive</h1>
+    </header>
+
+    {
+      archive.belowThreshold ? (
+        <ArchiveEmptyState mode="threshold" />
+      ) : (
+        <>
+          <FilterChrome tags={archive.tags} years={archive.years} />
+          <ResultsRegion entries={archive.entries} />
+          <ArchiveEmptyState mode="no-match" />
+        </>
+      )
+    }
+
+    <NewsletterPrompt />
+  </article>
+</BaseLayout>
+
+{
+  !archive.belowThreshold && (
+    <script>
+      type FilterState = {
+        column: string;
+        tags: string[];
+        year: string;
+        sort: 'newest' | 'oldest' | 'experience';
+        phase: string;
+      };
+
+      const PAGE_SIZE = 24;
+
+      const grid = document.querySelector<HTMLElement>('[data-archive-grid]');
+      const tiles = grid
+        ? Array.from(grid.querySelectorAll<HTMLAnchorElement>('.archive-tile'))
+        : [];
+      const emptyState = document.querySelector<HTMLElement>(
+        '[data-archive-empty][hidden]',
+      );
+      const loadMore = document.querySelector<HTMLButtonElement>(
+        '[data-load-more]',
+      );
+      const counterShown =
+        document.querySelector<HTMLElement>('[data-results-shown]');
+      const counterTotal =
+        document.querySelector<HTMLElement>('[data-results-total]');
+      const phaseRow = document.querySelector<HTMLElement>('[data-phase-row]');
+      const memoirOnlySort = document.querySelector<HTMLOptionElement>(
+        'option[data-memoir-only]',
+      );
+
+      let pageLimit = PAGE_SIZE;
+
+      function readState(): FilterState {
+        const p = new URLSearchParams(window.location.search);
+        const sortRaw = p.get('sort') ?? 'newest';
+        const sort: FilterState['sort'] =
+          sortRaw === 'oldest' || sortRaw === 'experience' ? sortRaw : 'newest';
+        return {
+          column: p.get('column') ?? '',
+          tags: (p.get('tags') ?? '').split(',').filter(Boolean),
+          year: p.get('year') ?? '',
+          sort,
+          phase: p.get('phase') ?? '',
+        };
+      }
+
+      function writeState(state: FilterState) {
+        const p = new URLSearchParams();
+        if (state.column) p.set('column', state.column);
+        if (state.tags.length) p.set('tags', state.tags.join(','));
+        if (state.year) p.set('year', state.year);
+        if (state.sort && state.sort !== 'newest') p.set('sort', state.sort);
+        if (state.phase) p.set('phase', state.phase);
+        const qs = p.toString();
+        const url = qs ? `?${qs}` : window.location.pathname;
+        window.history.pushState({}, '', url);
+      }
+
+      function clearFilters() {
+        writeState({
+          column: '',
+          tags: [],
+          year: '',
+          sort: 'newest',
+          phase: '',
+        });
+        pageLimit = PAGE_SIZE;
+        applyFilters();
+      }
+
+      function applyFilters() {
+        if (!grid) return;
+        const state = readState();
+
+        // Filter
+        const matched: HTMLAnchorElement[] = [];
+        for (const tile of tiles) {
+          const tileColumn = tile.dataset.column ?? '';
+          const tileTags = (tile.dataset.tags ?? '')
+            .split(',')
+            .filter(Boolean);
+          const tileYear = tile.dataset.year ?? '';
+          const tilePhase = tile.dataset.phase ?? '';
+
+          const matchColumn = !state.column || tileColumn === state.column;
+          const matchTags = state.tags.every((t) => tileTags.includes(t));
+          const matchYear = !state.year || tileYear === state.year;
+          const matchPhase = !state.phase || tilePhase === state.phase;
+
+          const isMatch =
+            matchColumn && matchTags && matchYear && matchPhase;
+          tile.dataset.filteredOut = isMatch ? 'false' : 'true';
+          if (isMatch) matched.push(tile);
+        }
+
+        // Sort matched tiles, then re-append in order. Tiles past
+        // pageLimit get data-page-hidden so the CSS hides them.
+        matched.sort((a, b) => {
+          if (state.sort === 'experience' && state.column === 'memoir') {
+            const ea = a.dataset.experience ?? '';
+            const eb = b.dataset.experience ?? '';
+            return ea.localeCompare(eb);
+          }
+          const da = a.dataset.published ?? '';
+          const db = b.dataset.published ?? '';
+          return state.sort === 'oldest'
+            ? da.localeCompare(db)
+            : db.localeCompare(da);
+        });
+
+        for (let i = 0; i < matched.length; i++) {
+          matched[i].dataset.pageHidden = i >= pageLimit ? 'true' : 'false';
+          grid.appendChild(matched[i]);
+        }
+        // Filtered-out tiles live at the end; their data-filtered-out
+        // attribute keeps them hidden via CSS.
+        for (const tile of tiles) {
+          if (tile.dataset.filteredOut === 'true') {
+            grid.appendChild(tile);
+          }
+        }
+
+        // Counter + Load more
+        const shown = Math.min(matched.length, pageLimit);
+        if (counterShown) counterShown.textContent = String(shown);
+        if (counterTotal) counterTotal.textContent = String(matched.length);
+        if (loadMore) loadMore.hidden = matched.length <= pageLimit;
+
+        // Empty state visibility
+        if (emptyState) emptyState.hidden = matched.length > 0;
+
+        // Sync UI to state
+        syncUI(state);
+      }
+
+      function syncUI(state: FilterState) {
+        document
+          .querySelectorAll<HTMLElement>('[data-filter="column"]')
+          .forEach((el) => {
+            el.setAttribute(
+              'aria-pressed',
+              String((el.dataset.value ?? '') === state.column),
+            );
+          });
+        document
+          .querySelectorAll<HTMLElement>('[data-filter="tag"]')
+          .forEach((el) => {
+            el.setAttribute(
+              'aria-pressed',
+              String(state.tags.includes(el.dataset.value ?? '')),
+            );
+          });
+        document
+          .querySelectorAll<HTMLElement>('[data-filter="phase"]')
+          .forEach((el) => {
+            el.setAttribute(
+              'aria-pressed',
+              String((el.dataset.value ?? '') === state.phase),
+            );
+          });
+
+        const yearSel = document.querySelector<HTMLSelectElement>(
+          '[data-filter="year"]',
+        );
+        if (yearSel) yearSel.value = state.year;
+        const sortSel = document.querySelector<HTMLSelectElement>(
+          '[data-filter="sort"]',
+        );
+        if (sortSel) sortSel.value = state.sort;
+
+        // Phase row + experience-sort option only for memoir column
+        const isMemoir = state.column === 'memoir';
+        if (phaseRow) phaseRow.hidden = !isMemoir;
+        if (memoirOnlySort) memoirOnlySort.hidden = !isMemoir;
+
+        // Clear-filters button visibility
+        const clearBtn = document.querySelector<HTMLButtonElement>(
+          '[data-clear-filters]',
+        );
+        const hasAnyFilter =
+          !!state.column ||
+          state.tags.length > 0 ||
+          !!state.year ||
+          state.sort !== 'newest' ||
+          !!state.phase;
+        if (clearBtn) clearBtn.hidden = !hasAnyFilter;
+      }
+
+      // Wire up handlers
+      document
+        .querySelectorAll<HTMLButtonElement>('[data-filter="column"]')
+        .forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const state = readState();
+            state.column = btn.dataset.value ?? '';
+            if (state.column !== 'memoir') {
+              state.phase = '';
+              if (state.sort === 'experience') state.sort = 'newest';
+            }
+            pageLimit = PAGE_SIZE;
+            writeState(state);
+            applyFilters();
+          });
+        });
+
+      document
+        .querySelectorAll<HTMLButtonElement>('[data-filter="tag"]')
+        .forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const state = readState();
+            const tag = btn.dataset.value ?? '';
+            if (state.tags.includes(tag)) {
+              state.tags = state.tags.filter((t) => t !== tag);
+            } else {
+              state.tags = [...state.tags, tag];
+            }
+            pageLimit = PAGE_SIZE;
+            writeState(state);
+            applyFilters();
+          });
+        });
+
+      document
+        .querySelectorAll<HTMLButtonElement>('[data-filter="phase"]')
+        .forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const state = readState();
+            state.phase = btn.dataset.value ?? '';
+            pageLimit = PAGE_SIZE;
+            writeState(state);
+            applyFilters();
+          });
+        });
+
+      document
+        .querySelector<HTMLSelectElement>('[data-filter="year"]')
+        ?.addEventListener('change', (e) => {
+          const state = readState();
+          state.year = (e.target as HTMLSelectElement).value;
+          pageLimit = PAGE_SIZE;
+          writeState(state);
+          applyFilters();
+        });
+
+      document
+        .querySelector<HTMLSelectElement>('[data-filter="sort"]')
+        ?.addEventListener('change', (e) => {
+          const state = readState();
+          state.sort = (e.target as HTMLSelectElement)
+            .value as FilterState['sort'];
+          writeState(state);
+          applyFilters();
+        });
+
+      document
+        .querySelectorAll<HTMLButtonElement>('[data-clear-filters]')
+        .forEach((btn) => {
+          btn.addEventListener('click', clearFilters);
+        });
+
+      loadMore?.addEventListener('click', () => {
+        pageLimit += PAGE_SIZE;
+        applyFilters();
+      });
+
+      window.addEventListener('popstate', () => {
+        pageLimit = PAGE_SIZE;
+        applyFilters();
+      });
+
+      // Initial render
+      applyFilters();
+    </script>
+  )
+}
+
+<style>
+  .archive {
+    /* full-width content per spec; no reading-measure constraint */
+  }
+
+  .archive__header {
+    max-width: 1100px;
+    margin: 3rem auto 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .archive__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin: 0 0 0.5rem;
+  }
+
+  .archive__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 2vw + 24px, 44px);
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+</style>

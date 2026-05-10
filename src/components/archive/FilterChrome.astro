@@ -1,0 +1,279 @@
+---
+import { COLUMNS_LIST } from '../../lib/columns';
+import { PHASE_ORDER, PHASE_LABELS } from '../../lib/memoir-spine';
+
+interface Props {
+  tags: Array<{ tag: string; count: number }>;
+  years: number[];
+}
+
+const { tags, years } = Astro.props;
+---
+
+<section class="filter-chrome" aria-label="Filter posts">
+  <div class="filter-row">
+    <h3 class="filter-label">Column</h3>
+    <div class="filter-pills">
+      <button
+        type="button"
+        class="pill"
+        data-filter="column"
+        data-value=""
+        aria-pressed="true"
+      >
+        All
+      </button>
+      {
+        COLUMNS_LIST.map((c) => (
+          <button
+            type="button"
+            class="pill pill--column"
+            data-filter="column"
+            data-value={c.slug}
+            data-column={c.slug}
+            aria-pressed="false"
+          >
+            {c.name}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="filter-row filter-row--phase" data-phase-row hidden>
+    <h3 class="filter-label">Phase</h3>
+    <div class="filter-pills" data-column="memoir">
+      <button
+        type="button"
+        class="pill pill--phase"
+        data-filter="phase"
+        data-value=""
+        aria-pressed="true"
+      >
+        All
+      </button>
+      {
+        PHASE_ORDER.map((p) => (
+          <button
+            type="button"
+            class="pill pill--phase"
+            data-filter="phase"
+            data-value={p}
+            aria-pressed="false"
+          >
+            {PHASE_LABELS[p]}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <h3 class="filter-label">Tags</h3>
+    <div class="filter-pills filter-pills--tags">
+      {
+        tags.map(({ tag }) => (
+          <button
+            type="button"
+            class="pill pill--tag"
+            data-filter="tag"
+            data-value={tag}
+            aria-pressed="false"
+          >
+            {tag}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="filter-row filter-row--dropdowns">
+    <div class="filter-dropdown">
+      <label class="filter-label" for="filter-year">Year</label>
+      <select id="filter-year" data-filter="year">
+        <option value="">All years</option>
+        {years.map((y) => <option value={y}>{y}</option>)}
+      </select>
+    </div>
+
+    <div class="filter-dropdown">
+      <label class="filter-label" for="filter-sort">Sort</label>
+      <select id="filter-sort" data-filter="sort">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="experience" data-memoir-only hidden>
+          By experience date
+        </option>
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="filter-clear"
+      data-clear-filters
+      hidden
+    >
+      Clear filters
+    </button>
+  </div>
+</section>
+
+<style>
+  .filter-chrome {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .filter-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+
+  .filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .filter-pills--tags {
+    /* tags can grow long — let them wrap naturally */
+  }
+
+  .pill {
+    padding: 0.35rem 0.85rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .pill:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-tertiary);
+  }
+
+  .pill[aria-pressed='true'] {
+    color: var(--color-text);
+    background: var(--color-border);
+    border-color: var(--color-text-tertiary);
+  }
+
+  /* Active column pills tint to their column accent. */
+  .pill--column[data-column='memoir'][aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-memoir-500) 30%, var(--color-bg-elevated));
+    border-color: var(--color-memoir-400);
+    color: var(--color-memoir-100);
+  }
+  .pill--column[data-column='concrete-truths'][aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-concrete-truths-500) 30%, var(--color-bg-elevated));
+    border-color: var(--color-concrete-truths-400);
+    color: var(--color-concrete-truths-100);
+  }
+  .pill--column[data-column='economics-of'][aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-economics-of-500) 30%, var(--color-bg-elevated));
+    border-color: var(--color-economics-of-400);
+    color: var(--color-economics-of-100);
+  }
+  .pill--column[data-column='off-the-record'][aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-off-the-record-500) 30%, var(--color-bg-elevated));
+    border-color: var(--color-off-the-record-400);
+    color: var(--color-off-the-record-100);
+  }
+  .pill--column[data-column='protective-factors'][aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-protective-factors-500) 30%, var(--color-bg-elevated));
+    border-color: var(--color-protective-factors-400);
+    color: var(--color-protective-factors-100);
+  }
+
+  /* Phase pills tint to memoir coral when active (memoir-only). */
+  .pill--phase[aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-memoir-500) 25%, var(--color-bg-elevated));
+    border-color: var(--color-memoir-400);
+    color: var(--color-memoir-100);
+  }
+
+  /* Tag pills are sage-neutral when active — tags cross columns,
+     so column-coloring would mislead per spec. */
+  .pill--tag[aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-off-the-record-500) 22%, var(--color-bg-elevated));
+    border-color: var(--color-off-the-record-400);
+    color: var(--color-off-the-record-100);
+  }
+
+  .filter-row--dropdowns {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .filter-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 140px;
+  }
+
+  .filter-dropdown select {
+    padding: 0.45rem 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .filter-dropdown select:focus-visible {
+    outline: 2px solid var(--color-structural-300);
+    outline-offset: 2px;
+  }
+
+  .filter-clear {
+    margin-left: auto;
+    padding: 0.45rem 0.95rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .filter-clear:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-tertiary);
+  }
+
+  @media (max-width: 640px) {
+    .filter-row--dropdowns {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .filter-clear {
+      margin-left: 0;
+    }
+  }
+</style>
