@@ -23,8 +23,15 @@ const ratioClass = `fig--${ratio.replace(':', '-')}`;
   .fig__placeholder {
     width: 100%;
     aspect-ratio: 4 / 3;
-    background: color-mix(in oklch, var(--column-500) 28%, var(--color-bg-elevated));
-    border: 1px dashed var(--column-600);
+    /* Falls back to structural-purple on pages without --column-*
+       (e.g. about, archive). On column-themed pages (posts) the
+       --column-* vars override and the figure picks up the column. */
+    background: color-mix(
+      in oklch,
+      var(--column-500, var(--color-structural-500)) 28%,
+      var(--color-bg-elevated)
+    );
+    border: 1px dashed var(--column-600, var(--color-structural-600));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,7 +45,7 @@ const ratioClass = `fig--${ratio.replace(':', '-')}`;
   .fig__label {
     font-family: var(--font-mono);
     font-size: 13px;
-    color: var(--column-200);
+    color: var(--column-200, var(--color-structural-200));
   }
 
   .fig__caption {
