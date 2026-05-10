@@ -1,0 +1,36 @@
+---
+import { COLUMNS, type ColumnSlug } from '../../lib/columns';
+
+interface Props {
+  column: ColumnSlug;
+}
+
+const { column } = Astro.props;
+const meta = COLUMNS[column];
+---
+
+<a class="column-tag-pill" href={`/${column}`} data-column={column}>
+  {meta.name}
+</a>
+
+<style>
+  .column-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--column-100);
+    background: color-mix(in oklch, var(--column-500) 35%, transparent);
+    border: 1px solid var(--column-500);
+    border-radius: 999px;
+    transition: background 0.15s ease;
+  }
+
+  .column-tag-pill:hover {
+    background: color-mix(in oklch, var(--column-500) 55%, transparent);
+  }
+</style>

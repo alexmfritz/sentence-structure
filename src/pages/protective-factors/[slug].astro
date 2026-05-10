@@ -1,0 +1,38 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import PullQuote from '../../components/post/PullQuote.astro';
+import Sidenote from '../../components/post/Sidenote.astro';
+import Stat from '../../components/post/Stat.astro';
+import BlockQuote from '../../components/post/BlockQuote.astro';
+import Figure from '../../components/post/Figure.astro';
+import { readingTimeMinutes } from '../../lib/reading-time';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('protective-factors');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'protective-factors'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const readingMinutes = readingTimeMinutes(post.body ?? '');
+---
+
+<PostLayout
+  column="protective-factors"
+  title={post.data.title}
+  deck={post.data.deck}
+  publishedDate={post.data.publishedDate}
+  readingMinutes={readingMinutes}
+  tags={post.data.tags}
+>
+  <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+</PostLayout>

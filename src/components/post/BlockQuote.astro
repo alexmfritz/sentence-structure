@@ -1,0 +1,47 @@
+---
+interface Props {
+  source?: string;
+}
+
+const { source } = Astro.props;
+---
+
+<figure class="block-quote">
+  <blockquote>
+    <slot />
+  </blockquote>
+  {source && <figcaption class="block-quote__source">— {source}</figcaption>}
+</figure>
+
+<style>
+  .block-quote {
+    margin: 1.75rem 1.5rem;
+    padding: 0;
+  }
+
+  .block-quote blockquote {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.55;
+    font-style: italic;
+    color: var(--color-text-secondary);
+  }
+
+  .block-quote blockquote :global(p) {
+    margin: 0 0 0.75rem;
+  }
+
+  .block-quote blockquote :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .block-quote__source {
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--color-text-tertiary);
+  }
+</style>

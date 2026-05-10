@@ -1,0 +1,68 @@
+---
+interface Props {
+  n: number;
+}
+
+const { n } = Astro.props;
+---
+
+<span class="sidenote">
+  <sup class="sidenote__ref" aria-hidden="true">{n}</sup>
+  <span class="sidenote__body" role="note">
+    <span class="sidenote__marker" aria-hidden="true">{n}</span>
+    <slot />
+  </span>
+</span>
+
+<style>
+  .sidenote {
+    /* container is purely inline; ref is inline, body is positioned */
+  }
+
+  .sidenote__ref {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--column-200);
+    vertical-align: super;
+    line-height: 0;
+    margin: 0 0.1em 0 0.05em;
+  }
+
+  /* MOBILE / default — body expands inline below the paragraph it
+     references. Always visible, no tap-to-expand. */
+  .sidenote__body {
+    display: block;
+    margin: 0.75rem 0;
+    padding-left: 12px;
+    border-left: 1px solid var(--column-600);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--color-text-secondary);
+  }
+
+  .sidenote__marker {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--column-200);
+    margin-right: 0.4em;
+  }
+
+  /* DESKTOP — body floats into the reserved right-margin column.
+     .post-body is 480px wide; the float pulls 172px (140 width
+     + 32 gap) past its right edge into the page margin. */
+  @media (min-width: 1024px) {
+    .sidenote__body {
+      float: right;
+      clear: right;
+      width: 140px;
+      margin: 0 -172px 0.75rem 32px;
+      padding-left: 12px;
+      border-left: 1px solid var(--column-600);
+    }
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import ColumnTagPill from './ColumnTagPill.astro';
+import PhaseTagPill from './PhaseTagPill.astro';
+import type { ColumnSlug } from '../../lib/columns';
+import type { Phase } from '../../content.config';
+
+interface Props {
+  column: ColumnSlug;
+  title: string;
+  deck?: string;
+  phase?: Phase;
+  firstLine?: string;
+}
+
+const { column, title, deck, phase, firstLine } = Astro.props;
+const renderedTitle = title.trim() ? title : firstLine ?? '';
+const isUntitled = !title.trim();
+---
+
+<header class="article-header">
+  <div class="article-header__pills">
+    <ColumnTagPill column={column} />
+    {phase && <PhaseTagPill phase={phase} />}
+  </div>
+
+  {
+    isUntitled ? (
+      <h1 class="article-header__title article-header__title--untitled">
+        {renderedTitle}
+      </h1>
+    ) : (
+      <h1 class="article-header__title">{renderedTitle}</h1>
+    )
+  }
+
+  {deck && <p class="article-header__deck text-deck">{deck}</p>}
+</header>
+
+<style>
+  .article-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .article-header__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .article-header__title {
+    font-family: var(--font-serif);
+    font-size: clamp(30px, 2vw + 24px, 44px);
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .article-header__title--untitled {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .article-header__deck {
+    font-family: var(--font-serif);
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 38ch;
+  }
+</style>
