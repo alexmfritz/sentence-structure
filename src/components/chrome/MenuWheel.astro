@@ -188,16 +188,16 @@ const items: Item[] = [
     pointer-events: auto;
   }
 
-  /* Wedge layout: items radiate from the trigger toward down-and-left.
-     Angle range 105°-180° in CSS coords (down-right toward straight-left).
-     Each item gets an angle interpolated by --i / (--total - 1). */
+  /* Staircase cascade. Each item descends by a fixed (--step-x, --step-y)
+     from the one above it. DOM order matches visual order: item 0 (Memoir)
+     sits closest to the trigger; item N sits furthest down-and-left.
+     Reads as a wedge because items get progressively further from the
+     trigger axis along both dimensions, but uniform spacing prevents the
+     pill-overlap that an arc layout produces with variable-width labels. */
   .menu-wheel__item {
-    --start-deg: 110;
-    --end-deg: 180;
-    --angle: calc(
-      (var(--start-deg) + (var(--end-deg) - var(--start-deg)) * var(--i) / (var(--total) - 1)) * 1deg
-    );
-    --radius: 175px;
+    --step-x: -32px;
+    --step-y: 56px;
+    --start-y: 64px;
     position: absolute;
     top: 0;
     right: 0;
@@ -211,8 +211,8 @@ const items: Item[] = [
   .menu-wheel__items[data-open='true'] .menu-wheel__item {
     transform:
       translate(
-        calc(cos(var(--angle)) * var(--radius)),
-        calc(sin(var(--angle)) * var(--radius))
+        calc(var(--i) * var(--step-x)),
+        calc(var(--start-y) + var(--i) * var(--step-y))
       )
       scale(1);
     opacity: 1;
