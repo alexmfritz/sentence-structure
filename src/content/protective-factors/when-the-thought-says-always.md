@@ -1,0 +1,35 @@
+---
+title: "When the Thought Says Always"
+deck: "On catching the word 'always' before it catches you."
+publishedDate: 2026-03-30
+tags: [cognitive-distortions, cbt, thought-patterns]
+---
+
+The word "always" is a flag. So is the word "never." So is the word "everyone," and the word "nothing," and the phrase "I should have known."
+
+In CBT, these are called absolutist words. They are the linguistic surface of a deeper pattern called all-or-nothing thinking, also called black-and-white thinking, also called dichotomous thinking. The pattern works like this: a thought arrives in the form of a totalizing claim. The claim feels true. The claim is, almost always, false.
+
+[PULL QUOTE: "A thought arrives in the form of a totalizing claim. The claim feels true. The claim is, almost always, false."]
+
+[H2: What it sounds like]
+
+I always mess this up.
+I never get it right.
+Everyone hates me.
+Nothing I do matters.
+
+The trick is not to argue with the thought. The trick is to notice the word.
+
+[H2: What you do with it]
+
+When you catch the word — "always," "never," "everyone," "nothing" — you do not have to dismiss the thought. You do not have to fight the thought. You only have to write the thought down with one substitution.
+
+*I always mess this up* — becomes — *I sometimes mess this up.*
+*I never get it right* — becomes — *I do not always get it right.*
+*Everyone hates me* — becomes — *Some people, in some moments, do not like what I am doing.*
+
+The substitutions are small. The substitutions are also, in my experience, the only thing that has ever worked.
+
+The thought does not lose its grip because you argued with it. The thought loses its grip because you wrote down a more accurate version of it, and the more accurate version is — almost imperceptibly — less terrible. The thought wants to be terrible. The thought is not in the business of being accurate. Your job is to be in the business of accuracy on the thought's behalf.
+
+This is one of the cheapest cognitive tools I have learned, and one of the most useful. It costs nothing, takes ten seconds, and can be done in any context, including in a cell, including before a count, including on a Tuesday morning in a coffee shop when a familiar thought arrives unbidden and offers you the word "always."

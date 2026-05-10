@@ -1,0 +1,38 @@
+---
+title: "Distress Tolerance When You Have Nowhere to Go"
+deck: "DBT skills, learned in a place with no exits."
+publishedDate: 2026-02-25
+tags: [distress-tolerance, dbt, coping]
+---
+
+In Dialectical Behavior Therapy, distress tolerance is the skill set you use when you cannot solve the problem and cannot leave the situation. It is, in other words, the skill set most directly applicable to incarceration.
+
+The skills have acronyms. The acronyms are silly. The acronyms also work.
+
+[H2: TIPP]
+
+**T** — Temperature. Cold water on your face, or holding ice, or breathing cool air. Drops your physiological arousal in seconds. Available in any cell with a sink.
+
+**I** — Intense exercise. Push-ups, jumping jacks, anything that makes your heart move. Ten minutes is enough. Available in any cell with a floor.
+
+**P** — Paced breathing. Exhale longer than you inhale. Four-second inhale, six-second exhale, repeat for two minutes.
+
+**P** — Progressive muscle relaxation. Tense and release each muscle group, head to toe.
+
+[PULL QUOTE: "Distress tolerance is the skill set you use when you cannot solve the problem and cannot leave the situation. It is, in other words, the skill set most directly applicable to incarceration."]
+
+[H2: ACCEPTS]
+
+**A** — Activities. Read, draw, write, play cards.
+**C** — Contributing. Help someone with a letter, with a chore, with a problem.
+**C** — Comparison. Not "people have it worse," but "I have had it worse and survived."
+**E** — Emotions. Generate the opposite emotion deliberately. Watch a comedy. Listen to a song you love.
+**P** — Pushing away. Visualize putting the problem in a box on a shelf. Come back to it later.
+**T** — Thoughts. Count. Recite something. Do mental math.
+**S** — Sensations. Cold water again. Strong taste. Loud music if you have headphones.
+
+The skills do not solve the problem. The skills are not designed to solve the problem. The skills get you through the next ten minutes without doing something that will make the problem worse.
+
+I learned these skills in a class taught by a counselor who had, herself, spent a decade as a clinician on a locked psychiatric unit. She knew the population. She knew the room. She did not pretend the skills were a cure. She presented them as what they are: tools that work, on the average, in the moments where the only options are to sit through the wave or to break something.
+
+I have, in the years since, sat through more waves than I have broken things. The math is in the skills' favor.

@@ -1,17 +1,66 @@
 ---
+import { getCollection } from 'astro:content';
+import { COLUMNS_LIST, type ColumnSlug } from '../lib/columns';
+import '../styles/global.css';
 
+const sections = await Promise.all(
+  COLUMNS_LIST.map(async (column) => {
+    const posts = await getCollection(column.slug as ColumnSlug);
+    posts.sort(
+      (a, b) =>
+        b.data.publishedDate.getTime() - a.data.publishedDate.getTime(),
+    );
+    return { column, posts };
+  }),
+);
 ---
 
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Sentence Structure — Phase 1</title>
+  </head>
+  <body class="min-h-screen">
+    <main class="mx-auto max-w-2xl px-6 py-16">
+      <p class="text-eyebrow font-sans uppercase opacity-60">Phase 1 splash</p>
+      <h1 class="text-title mt-2">Sentence Structure</h1>
+      <p class="text-deck mt-4 opacity-80">
+        Foundation in place. Replaced by the homepage in Phase 3.
+      </p>
+
+      {
+        sections.map(({ column, posts }) => (
+          <section class="mt-12">
+            <h2
+              class="text-h2 font-sans"
+              style={`color: var(--color-${column.slug}-300)`}
+            >
+              {column.name}
+            </h2>
+            <p class="text-meta font-sans mt-1 opacity-60">{column.deck}</p>
+            {posts.length === 0 ? (
+              <p class="text-body mt-3 italic opacity-50">No posts yet.</p>
+            ) : (
+              <ul class="mt-4 space-y-2">
+                {posts.map((post) => (
+                  <li class="text-body">
+                    <span class="text-meta font-mono opacity-60">
+                      {post.data.publishedDate.toISOString().slice(0, 10)}
+                    </span>
+                    <span class="ml-3">
+                      {post.data.title || '[ untitled ]'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))
+      }
+    </main>
+  </body>
 </html>
