@@ -140,7 +140,7 @@
   --color-bg-elevated: oklch(0.20 0.005 280);
   --color-text: oklch(0.95 0.005 280);
   --color-text-secondary: oklch(0.72 0.005 280);
-  --color-text-tertiary: oklch(0.50 0.005 280);
+  --color-text-tertiary: oklch(0.60 0.005 280);
   --color-border: oklch(0.30 0.005 280);
 
   /* ============================================================
@@ -246,6 +246,49 @@
   }
 
   /* ============================================================
+     SKIP LINK — sitewide keyboard a11y. Hidden off-screen until
+     it receives keyboard focus, then slides into view at top-left.
+     Lives at the top of <body> in BaseLayout; targets <main id="main">.
+     ============================================================ */
+
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 200;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-elevated);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+  }
+
+  .skip-link:focus-visible {
+    top: 0;
+  }
+
+  /* ============================================================
+     GLOBAL FOCUS RING — every interactive element gets a
+     consistent structural-purple outline on keyboard focus.
+     Per-component overrides still take precedence (e.g. menu
+     wheel trigger uses its own focus ring style).
+     ============================================================ */
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  details > summary:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-structural-300);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* ============================================================
      PLACEHOLDER convention — bracketed mono paragraphs in scaffolded
      pages (e.g. the about-page essay before Alex writes it).
      Marks the difference between "design intent" and "real prose"
@@ -295,5 +338,26 @@
     --glass-border-strong: var(--color-border);
     --glass-blur: none;
     --glass-blur-strong: none;
+  }
+}
+
+/* ============================================================
+   prefers-reduced-motion — global safety net. Per-component
+   overrides (i-am-here pulse, mini-spine halo, menu-wheel wedge)
+   already handle their autoplay animations explicitly; this
+   blanket rule catches transitions, scroll-snap, and any future
+   animation that didn't get its own handler. Uses 0.01ms instead
+   of 0 so :hover state changes still fire (just instantly), which
+   keeps UI feedback intact while killing perceptible motion.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

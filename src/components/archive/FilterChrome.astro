@@ -12,7 +12,7 @@ const { tags, years } = Astro.props;
 
 <section class="filter-chrome" aria-label="Filter posts">
   <div class="filter-row">
-    <h3 class="filter-label">Column</h3>
+    <h2 class="filter-label">Column</h2>
     <div class="filter-pills">
       <button
         type="button"
@@ -41,7 +41,7 @@ const { tags, years } = Astro.props;
   </div>
 
   <div class="filter-row filter-row--phase" data-phase-row hidden>
-    <h3 class="filter-label">Phase</h3>
+    <h2 class="filter-label">Phase</h2>
     <div class="filter-pills" data-column="memoir">
       <button
         type="button"
@@ -69,7 +69,7 @@ const { tags, years } = Astro.props;
   </div>
 
   <div class="filter-row">
-    <h3 class="filter-label">Tags</h3>
+    <h2 class="filter-label">Tags</h2>
     <div class="filter-pills filter-pills--tags">
       {
         tags.map(({ tag }) => (

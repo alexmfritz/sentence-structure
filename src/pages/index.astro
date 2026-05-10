@@ -16,10 +16,10 @@ const { hero, anchorRow, showcase, archiveSampler, isSparse } =
   title="Sentence Structure — What They Don't Tell You"
   description="A blog about the prison experience. Memoir, journalism, satire, poetry, and the cognitive practice that came with all four."
 >
-  <a class="skip-link" href="#main">Skip to content</a>
-
   <header class="home-header">
-    <a href="/" class="home-header__wordmark">Sentence Structure</a>
+    <h1 class="home-header__heading">
+      <a href="/" class="home-header__wordmark">Sentence Structure</a>
+    </h1>
   </header>
 
   {
@@ -31,46 +31,33 @@ const { hero, anchorRow, showcase, archiveSampler, isSparse } =
     )
   }
 
-  <main id="main">
-    {hero && <Hero post={hero} />}
+  {hero && <Hero post={hero} />}
 
-    {anchorRow.length > 0 && <MosaicAnchorRow posts={anchorRow} />}
+  {anchorRow.length > 0 && <MosaicAnchorRow posts={anchorRow} />}
 
-    <MosaicColumnShowcase showcase={showcase} />
+  <MosaicColumnShowcase showcase={showcase} />
 
-    {
-      archiveSampler.length > 0 && (
-        <MosaicArchiveSampler posts={archiveSampler} />
-      )
-    }
+  {
+    archiveSampler.length > 0 && (
+      <MosaicArchiveSampler posts={archiveSampler} />
+    )
+  }
 
-    <ManifestoStrip isSparse={isSparse} />
-  </main>
+  <ManifestoStrip isSparse={isSparse} />
 </BaseLayout>
 
 <style>
-  .skip-link {
-    position: absolute;
-    top: -100px;
-    left: 0;
-    padding: 0.5rem 1rem;
-    background: var(--color-bg-elevated);
-    color: var(--color-text);
-    font-family: var(--font-sans);
-    font-size: 14px;
-    border: 1px solid var(--color-border);
-    z-index: 100;
-  }
-
-  .skip-link:focus-visible {
-    top: 0;
-  }
-
   .home-header {
     position: absolute;
     top: 1.25rem;
     left: 1.5rem;
     z-index: 30;
+  }
+
+  .home-header__heading {
+    margin: 0;
+    font: inherit;
+    font-weight: inherit;
   }
 
   .home-header__wordmark {
@@ -93,8 +80,4 @@ const { hero, anchorRow, showcase, archiveSampler, isSparse } =
   }
 
   /* prefers-reduced-transparency handled globally in global.css. */
-
-  main {
-    position: relative;
-  }
 </style>
