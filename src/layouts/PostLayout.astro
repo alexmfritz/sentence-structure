@@ -7,6 +7,7 @@ import ArticleHeader from '../components/post/ArticleHeader.astro';
 import BylineStrip from '../components/post/BylineStrip.astro';
 import { COLUMNS, type ColumnSlug } from '../lib/columns';
 import type { Phase } from '../content.config';
+import { makeExcerpt } from '../lib/content';
 
 interface Props {
   column: ColumnSlug;
@@ -17,6 +18,7 @@ interface Props {
   publishedDate: Date;
   readingMinutes: number;
   tags: string[];
+  body?: string;
 }
 
 const {
@@ -28,6 +30,7 @@ const {
   publishedDate,
   readingMinutes,
   tags,
+  body,
 } = Astro.props;
 
 const meta = COLUMNS[column];
@@ -36,12 +39,16 @@ const titleForHead =
   firstLine?.replace(/^[\s>*_`#-]+/, '').slice(0, 60) ||
   'Untitled';
 
+// Meta description: prefer deck, fall back to a body excerpt so
+// every post page has a description tag for SEO / social previews.
+const description = deck ?? makeExcerpt(body) ?? undefined;
+
 const isOffTheRecord = column === 'off-the-record';
 ---
 
 <BaseLayout
   title={`${titleForHead} — ${meta.name} — Sentence Structure`}
-  description={deck}
+  description={description}
 >
   <div class="post-shell" data-column={column}>
     <ReadingProgress />

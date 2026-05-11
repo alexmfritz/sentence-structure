@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { ColumnSlug } from './columns';
 import type { Phase } from '../content.config';
+import { makeExcerpt } from './content';
 
 export interface ArchiveEntry {
   collection: ColumnSlug;
@@ -25,19 +26,10 @@ export interface ArchiveData {
 }
 
 const THRESHOLD = 6;
-const EXCERPT_LENGTH = 140;
 export const PAGE_SIZE = 24;
 
-function makeExcerpt(deck: string | undefined, body: string | undefined): string {
-  if (deck) return deck;
-  if (!body) return '';
-  const cleaned = body
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/[#*_`>~\-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (cleaned.length <= EXCERPT_LENGTH) return cleaned;
-  return cleaned.slice(0, EXCERPT_LENGTH).trimEnd() + '…';
+function deckOrExcerpt(deck: string | undefined, body: string | undefined): string {
+  return deck ?? makeExcerpt(body);
 }
 
 export async function getArchiveData(): Promise<ArchiveData> {
@@ -61,7 +53,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       experienceDate: post.data.experienceDate,
       phase: post.data.phase,
       tags: post.data.tags,
-      excerpt: makeExcerpt(post.data.deck, post.body),
+      excerpt: deckOrExcerpt(post.data.deck, post.body),
       year: post.data.publishedDate.getFullYear(),
       url: `/memoir/${post.id}`,
     });
@@ -75,7 +67,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       deck: post.data.deck,
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
-      excerpt: makeExcerpt(post.data.deck, post.body),
+      excerpt: deckOrExcerpt(post.data.deck, post.body),
       year: post.data.publishedDate.getFullYear(),
       url: `/concrete-truths/${post.id}`,
     });
@@ -89,7 +81,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       deck: post.data.deck,
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
-      excerpt: makeExcerpt(post.data.deck, post.body),
+      excerpt: deckOrExcerpt(post.data.deck, post.body),
       year: post.data.publishedDate.getFullYear(),
       url: `/economics-of/${post.id}`,
     });
@@ -103,7 +95,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       deck: post.data.deck,
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
-      excerpt: makeExcerpt(post.data.deck, post.body),
+      excerpt: deckOrExcerpt(post.data.deck, post.body),
       year: post.data.publishedDate.getFullYear(),
       url: `/off-the-record/${post.id}`,
     });
@@ -117,7 +109,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       deck: post.data.deck,
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
-      excerpt: makeExcerpt(post.data.deck, post.body),
+      excerpt: deckOrExcerpt(post.data.deck, post.body),
       year: post.data.publishedDate.getFullYear(),
       url: `/protective-factors/${post.id}`,
     });
