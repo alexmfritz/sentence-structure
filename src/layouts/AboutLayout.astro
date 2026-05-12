@@ -159,7 +159,19 @@ const contactEmail = frontmatter.contactEmail ?? 'hello@sentencestructure.blog';
 
   /* Body typography for the slotted MDX content. */
   .about__body :global(p) {
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.6rem;
+  }
+
+  /* Asterism — chapbook-convention section break between the
+     essay's natural movements. Structural purple to match the
+     about page's accent (not column accents). */
+  .about__body :global(.about__asterism) {
+    text-align: center;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--color-structural-300);
+    margin: 4rem 0;
+    user-select: none;
   }
 
   .about__body :global(h2) {
