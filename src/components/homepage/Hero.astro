@@ -1,8 +1,10 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import ColumnTagPill from '../post/ColumnTagPill.astro';
 import MenuWheel from '../chrome/MenuWheel.astro';
 import HamburgerMenu from '../chrome/HamburgerMenu.astro';
+import landingHero from '../../assets/landing-hero.png';
 
 interface Props {
   post: CollectionEntry<'memoir'>;
@@ -13,7 +15,16 @@ const href = `/memoir/${post.id}`;
 ---
 
 <section class="hero" data-column="memoir" aria-labelledby="hero-title">
-  <div class="hero__image" aria-hidden="true"></div>
+  <Image
+    src={landingHero}
+    alt=""
+    class="hero__image"
+    widths={[768, 1280, 1920, 2752]}
+    sizes="100vw"
+    formats={['avif', 'webp']}
+    loading="eager"
+    aria-hidden="true"
+  />
 
   <MenuWheel />
   <HamburgerMenu />
@@ -30,7 +41,7 @@ const href = `/memoir/${post.id}`;
   .hero {
     position: relative;
     width: 100%;
-    aspect-ratio: 2 / 1;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--color-bg);
   }
@@ -38,13 +49,10 @@ const href = `/memoir/${post.id}`;
   .hero__image {
     position: absolute;
     inset: 0;
-    background:
-      radial-gradient(
-        ellipse at 70% 35%,
-        color-mix(in oklch, var(--column-400) 40%, var(--color-bg-elevated)) 0%,
-        color-mix(in oklch, var(--column-500) 35%, var(--color-bg)) 60%,
-        var(--color-bg) 100%
-      );
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .hero__glass {
