@@ -38,9 +38,15 @@ const contactEmail = frontmatter.contactEmail ?? 'hello@sentencestructure.blog';
       {frontmatter.deck && <p class="about__deck">{frontmatter.deck}</p>}
     </header>
 
-    <div class="about__hero" aria-hidden="true">
-      <div class="about__hero-block"></div>
-    </div>
+    <figure class="about__hero">
+      <img
+        src="/images/about-hero.png"
+        alt="Generative portrait of Alex Fritz: mouth open mid-shout, surrounded by runes, tentacles, and watching eyes."
+        class="about__hero-image"
+        width="560"
+        height="560"
+      />
+    </figure>
 
     <div class="about__byline">
       Last updated <time datetime={frontmatter.lastUpdated}>{lastUpdatedLabel}</time>
@@ -98,22 +104,19 @@ const contactEmail = frontmatter.contactEmail ?? 'hello@sentencestructure.blog';
   }
 
   .about__hero {
-    max-width: 720px;
-    margin: 0 auto 1.5rem;
+    max-width: 560px;
+    margin: 0 auto 2rem;
     padding: 0 1.5rem;
   }
 
-  .about__hero-block {
+  .about__hero-image {
     width: 100%;
-    aspect-ratio: 2 / 1;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     border-radius: 4px;
-    background: radial-gradient(
-      ellipse at 65% 40%,
-      color-mix(in oklch, var(--color-structural-400) 35%, var(--color-bg-elevated)) 0%,
-      color-mix(in oklch, var(--color-structural-500) 30%, var(--color-bg)) 60%,
-      var(--color-bg) 100%
-    );
     border: 1px solid var(--color-structural-600);
+    display: block;
   }
 
   .about__byline {
