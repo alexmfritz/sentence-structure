@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import type { HomepagePost } from '../../lib/homepage';
 import { COLUMNS } from '../../lib/columns';
 
@@ -18,7 +19,21 @@ const trio = posts.slice(0, 3);
         href={`/${post.collection}/${post.id}`}
         data-column={post.collection}
       >
-        <div class="sampler__bg" aria-hidden="true" />
+        {post.data.heroImage ? (
+          <Fragment>
+            <Image
+              src={post.data.heroImage}
+              alt=""
+              class="sampler__photo"
+              widths={[260, 400, 520]}
+              sizes="(min-width: 769px) 254px, 100vw"
+              format="webp"
+            />
+            <div class="sampler__scrim" aria-hidden="true" />
+          </Fragment>
+        ) : (
+          <div class="sampler__bg" aria-hidden="true" />
+        )}
         <div class="sampler__content">
           <span class="tile__pill">{COLUMNS[post.collection].name}</span>
           <h3 class="sampler__title">{post.data.title || '[ untitled ]'}</h3>
@@ -72,6 +87,33 @@ const trio = posts.slice(0, 3);
 
   .sampler__tile:hover .sampler__bg {
     background: color-mix(in oklch, var(--column-500) 40%, var(--color-bg-elevated));
+  }
+
+  /* Post hero image fill + legibility scrim, matching the anchor row. */
+  .sampler__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sampler__scrim {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--column-600);
+    border-radius: 4px;
+    background: linear-gradient(
+      180deg,
+      oklch(0.08 0.01 280 / 0) 0%,
+      oklch(0.08 0.01 280 / 0.2) 40%,
+      oklch(0.08 0.01 280 / 0.9) 100%
+    );
+    transition: opacity 0.2s ease;
+  }
+
+  .sampler__tile:hover .sampler__scrim {
+    opacity: 0.86;
   }
 
   .sampler__tile--archive .sampler__bg {
