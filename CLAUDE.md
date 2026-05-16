@@ -39,13 +39,16 @@ For Phase 2 (post template) the most relevant sections are:
 
 Static SSG output (`output: 'static'`). Deploy target is Cloudflare Pages free tier; setup deferred until ready to ship. Domain `sentencestructure.blog` deferred.
 
-## Phase 1 stack constraints (load-bearing)
+## Stack constraints & build gotchas (load-bearing)
 
-These were discovered during Phase 1 and need to be respected going forward:
+Discovered during the build; respect going forward — each one breaks the build or silently breaks the design:
 
 1. **`vite@^7.3.2` is pinned at the top level** of `package.json` devDeps. `@tailwindcss/vite@4.3.0` declares a permissive peer (`^5.2.0 || ^6 || ^7 || ^8`); without the pin, npm auto-installs Vite 8 (with Rolldown), which collides with Astro 6's Vite 7 at build time (`Missing field tsconfigPaths` error). When adding new deps that pull in Vite, run `npm ls vite` afterward and confirm it still dedupes to a single 7.x.
 2. **Import `z` from `zod` directly**, not from `astro:content`. Astro 6 deprecated the `z` re-export. Type aliases like `z.infer<typeof X>` error if `z` is sourced from `astro:content`.
 3. **Tailwind v4 `@theme` does NOT support `--text-*--font-style`.** It supports `--text-*--line-height`, `--text-*--letter-spacing`, and `--text-*--font-weight` only. Italic for `text-deck` and `text-caption` is applied via a small `@layer base` rule at the bottom of `src/styles/global.css`.
+4. **Tailwind v4 preflight resets `img { max-width: 100% }`.** Any image meant to render *wider than its container* (e.g. the `.article-figure` breakout past the 480px post text column) is silently capped at container width unless the rule explicitly sets `max-width: none`. Symptom: the image collapses to container width and, if it has negative side margins, shifts to one side instead of breaking out symmetrically.
+5. **`<Image>` from `astro:assets` takes `format` (singular), not `formats`.** `formats` (array) is a `<Picture>`-only prop; it's silently ignored on `<Image>` and flagged by `astro check`.
+6. **The dev server serves stale renders after content-schema or image-pipeline changes.** Editing `content.config.ts` (e.g. adding a schema field) or adding images while `npm run dev` is running leaves stale output — wrong renders, or a `LocalImageUsedWrongly` error. Fix: stop the dev server, `rm -rf .astro node_modules/.astro`, restart. `npm run build` is always correct — trust it over the dev server when they disagree.
 
 ## Five columns + key constants
 
