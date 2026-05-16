@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 import type { ColumnSlug } from './columns';
 import type { Phase } from '../content.config';
 import { makeExcerpt } from './content';
@@ -13,6 +14,7 @@ export interface ArchiveEntry {
   phase?: Phase;
   tags: string[];
   excerpt: string;
+  heroImage?: ImageMetadata;
   year: number;
   url: string;
 }
@@ -54,6 +56,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       phase: post.data.phase,
       tags: post.data.tags,
       excerpt: deckOrExcerpt(post.data.deck, post.body),
+      heroImage: post.data.heroImage,
       year: post.data.publishedDate.getFullYear(),
       url: `/memoir/${post.id}`,
     });
@@ -68,6 +71,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
       excerpt: deckOrExcerpt(post.data.deck, post.body),
+      heroImage: post.data.heroImage,
       year: post.data.publishedDate.getFullYear(),
       url: `/concrete-truths/${post.id}`,
     });
@@ -82,6 +86,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
       excerpt: deckOrExcerpt(post.data.deck, post.body),
+      heroImage: post.data.heroImage,
       year: post.data.publishedDate.getFullYear(),
       url: `/economics-of/${post.id}`,
     });
@@ -96,6 +101,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
       excerpt: deckOrExcerpt(post.data.deck, post.body),
+      heroImage: post.data.heroImage,
       year: post.data.publishedDate.getFullYear(),
       url: `/off-the-record/${post.id}`,
     });
@@ -110,6 +116,7 @@ export async function getArchiveData(): Promise<ArchiveData> {
       publishedDate: post.data.publishedDate,
       tags: post.data.tags,
       excerpt: deckOrExcerpt(post.data.deck, post.body),
+      heroImage: post.data.heroImage,
       year: post.data.publishedDate.getFullYear(),
       url: `/protective-factors/${post.id}`,
     });

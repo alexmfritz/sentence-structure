@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { COLUMNS } from '../../lib/columns';
 import type { ArchiveEntry } from '../../lib/archive';
 import { PAGE_SIZE } from '../../lib/archive';
@@ -41,7 +42,21 @@ const initialVisible = Math.min(PAGE_SIZE, totalAcrossPages);
           data-page-hidden={i >= PAGE_SIZE ? 'true' : 'false'}
           role="listitem"
         >
-          <div class="archive-tile__bg" aria-hidden="true" />
+          {entry.heroImage ? (
+            <Fragment>
+              <Image
+                src={entry.heroImage}
+                alt=""
+                class="archive-tile__photo"
+                widths={[340, 520, 680]}
+                sizes="(min-width: 1024px) 340px, (min-width: 640px) 50vw, 100vw"
+                format="webp"
+              />
+              <div class="archive-tile__scrim" aria-hidden="true" />
+            </Fragment>
+          ) : (
+            <div class="archive-tile__bg" aria-hidden="true" />
+          )}
           <div class="archive-tile__content">
             <span class="archive-tile__pill">{COLUMNS[entry.collection].name}</span>
             <h3 class="archive-tile__title">
@@ -155,6 +170,36 @@ const initialVisible = Math.min(PAGE_SIZE, totalAcrossPages);
     inset: 0;
     border-radius: 4px;
     transition: background 0.2s ease;
+  }
+
+  /* Post hero image fill + legibility scrim. Archive tile content is
+     top-anchored and dense (pill / title / date / excerpt), so the
+     scrim is top-weighted. Border via --column-600 (each tile carries
+     its own data-column). */
+  .archive-tile__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .archive-tile__scrim {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--column-600);
+    border-radius: 4px;
+    background: linear-gradient(
+      180deg,
+      oklch(0.07 0.01 280 / 0.9) 0%,
+      oklch(0.07 0.01 280 / 0.55) 65%,
+      oklch(0.07 0.01 280 / 0.4) 100%
+    );
+    transition: opacity 0.2s ease;
+  }
+
+  .archive-tile:hover .archive-tile__scrim {
+    opacity: 0.88;
   }
 
   .archive-tile__content {
