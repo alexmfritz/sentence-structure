@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import type { HomepagePost } from '../../lib/homepage';
 import { COLUMNS } from '../../lib/columns';
 
@@ -19,7 +20,21 @@ function href(post: HomepagePost) {
   feature && (
     <section class="anchor-row" aria-label="Recent pieces">
       <a class="anchor-row__feature" href={href(feature)} data-column={feature.collection}>
-        <div class="anchor-row__feature-bg" aria-hidden="true" />
+        {feature.data.heroImage ? (
+          <Fragment>
+            <Image
+              src={feature.data.heroImage}
+              alt=""
+              class="anchor-row__photo"
+              widths={[480, 720, 1040]}
+              sizes="(min-width: 769px) 700px, 100vw"
+              format="webp"
+            />
+            <div class="anchor-row__scrim" aria-hidden="true" />
+          </Fragment>
+        ) : (
+          <div class="anchor-row__feature-bg" aria-hidden="true" />
+        )}
         <div class="anchor-row__feature-content">
           <span class="tile__pill">{COLUMNS[feature.collection].name}</span>
           <h3 class="anchor-row__feature-title">
@@ -34,7 +49,21 @@ function href(post: HomepagePost) {
       <div class="anchor-row__stack">
         {stacked.map((post) => (
           <a class="anchor-row__small" href={href(post)} data-column={post.collection}>
-            <div class="anchor-row__small-bg" aria-hidden="true" />
+            {post.data.heroImage ? (
+              <Fragment>
+                <Image
+                  src={post.data.heroImage}
+                  alt=""
+                  class="anchor-row__photo"
+                  widths={[320, 480, 700]}
+                  sizes="(min-width: 769px) 340px, 100vw"
+                  format="webp"
+                />
+                <div class="anchor-row__scrim" aria-hidden="true" />
+              </Fragment>
+            ) : (
+              <div class="anchor-row__small-bg" aria-hidden="true" />
+            )}
             <div class="anchor-row__small-content">
               <span class="tile__pill">{COLUMNS[post.collection].name}</span>
               <h3 class="anchor-row__small-title">
@@ -91,6 +120,36 @@ function href(post: HomepagePost) {
   .anchor-row__feature:hover .anchor-row__feature-bg,
   .anchor-row__small:hover .anchor-row__small-bg {
     background: color-mix(in oklch, var(--column-500) 48%, var(--color-bg-elevated));
+  }
+
+  /* Post hero image fill + legibility scrim (bottom-weighted, since
+     tile content sits at the bottom edge). The scrim carries the
+     border so image tiles and gradient-fallback tiles frame alike. */
+  .anchor-row__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .anchor-row__scrim {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--column-600);
+    border-radius: 4px;
+    background: linear-gradient(
+      180deg,
+      oklch(0.08 0.01 280 / 0) 0%,
+      oklch(0.08 0.01 280 / 0.15) 45%,
+      oklch(0.08 0.01 280 / 0.9) 100%
+    );
+    transition: opacity 0.2s ease;
+  }
+
+  .anchor-row__feature:hover .anchor-row__scrim,
+  .anchor-row__small:hover .anchor-row__scrim {
+    opacity: 0.86;
   }
 
   .anchor-row__feature-content,
