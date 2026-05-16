@@ -17,10 +17,12 @@ interface Props {
 }
 
 const { frontmatter } = Astro.props;
+// Date-only value parsed as UTC midnight — format in UTC or it renders a day early.
 const lastUpdatedLabel = new Intl.DateTimeFormat('en-US', {
   month: 'long',
   day: 'numeric',
   year: 'numeric',
+  timeZone: 'UTC',
 }).format(new Date(frontmatter.lastUpdated));
 
 const contactEmail = frontmatter.contactEmail ?? 'hello@sentencestructure.blog';
