@@ -208,6 +208,26 @@ const isOffTheRecord = column === 'off-the-record';
     margin: 2rem 0;
   }
 
+  /* Article figures (inline <Image> in MDX). Full text-column width
+     on narrow viewports; on wide viewports they break out past the
+     480px reading measure to ~680px for editorial impact. */
+  .post-body :global(.article-figure) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 2rem 0;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 960px) {
+    .post-body :global(.article-figure) {
+      width: 680px;
+      margin-left: -100px;
+      margin-right: -100px;
+    }
+  }
+
   /* clear floated sidenotes so they don't bleed past the body */
   .post-body::after {
     content: '';
