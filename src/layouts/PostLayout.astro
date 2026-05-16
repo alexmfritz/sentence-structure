@@ -249,6 +249,12 @@ const isOffTheRecord = column === 'off-the-record';
   @media (min-width: 960px) {
     .post-body :global(.article-figure) {
       width: 680px;
+      /* Tailwind's preflight resets img to max-width: 100%, which
+         was silently capping the figure at the 480px text-column
+         width — the 680px never took effect and the breakout
+         collapsed into a leftward shift. Lift the cap so the
+         figure can actually exceed its container. */
+      max-width: none;
       margin-left: -100px;
       margin-right: -100px;
     }
