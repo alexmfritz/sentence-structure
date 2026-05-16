@@ -10,41 +10,49 @@ const phaseEnum = z.enum([
   'community-custody',
 ]);
 
-const basePostSchema = z.object({
+// Shared post fields. Plain object so it can be spread into each
+// collection's schema function, where the image() helper is in scope
+// for the optional heroImage.
+const basePostFields = {
   title: z.string(),
   deck: z.string().optional(),
   publishedDate: z.coerce.date(),
   tags: z.array(z.string()).default([]),
-});
-
-const memoirSchema = basePostSchema.extend({
-  phase: phaseEnum,
-  experienceDate: z.coerce.date(),
-});
+};
 
 const memoir = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/memoir' }),
-  schema: memoirSchema,
+  schema: ({ image }) =>
+    z.object({
+      ...basePostFields,
+      heroImage: image().optional(),
+      phase: phaseEnum,
+      experienceDate: z.coerce.date(),
+    }),
 });
 
 const concreteTruths = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/concrete-truths' }),
-  schema: basePostSchema,
+  schema: ({ image }) =>
+    z.object({ ...basePostFields, heroImage: image().optional() }),
 });
 
 const economicsOf = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/economics-of' }),
-  schema: basePostSchema,
+  schema: ({ image }) =>
+    z.object({ ...basePostFields, heroImage: image().optional() }),
 });
 
 const offTheRecord = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/off-the-record' }),
-  schema: basePostSchema,
+  schema: ({ image }) =>
+    z.object({ ...basePostFields, heroImage: image().optional() }),
 });
 
 const protectiveFactors = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/protective-factors' }),
-  schema: basePostSchema,
+  schema: ({ image }) =>
+    z.object({ ...basePostFields, heroImage: image().optional() }),
 });
 
 export const collections = {
@@ -56,5 +64,3 @@ export const collections = {
 };
 
 export type Phase = z.infer<typeof phaseEnum>;
-export type MemoirPostData = z.infer<typeof memoirSchema>;
-export type BasePostData = z.infer<typeof basePostSchema>;

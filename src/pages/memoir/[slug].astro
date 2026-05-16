@@ -35,6 +35,7 @@ const readingMinutes = readingTimeMinutes(post.body ?? '');
   readingMinutes={readingMinutes}
   tags={post.data.tags}
   body={post.body}
+  heroImage={post.data.heroImage}
 >
   <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
 </PostLayout>
