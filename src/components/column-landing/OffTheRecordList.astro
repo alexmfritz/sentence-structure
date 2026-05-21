@@ -23,11 +23,13 @@ const rendered = await Promise.all(
 
 const isEmpty = rendered.length === 0;
 
+// Date-only value parsed as UTC midnight — format in UTC or it renders a day early.
 const dateLabel = (d: Date) =>
   new Intl.DateTimeFormat('en-US', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(d);
 ---
 

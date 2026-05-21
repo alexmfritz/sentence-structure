@@ -35,17 +35,20 @@ const ratio = Math.max(
   ),
 );
 const iAmHerePosition = `${(ratio * 100).toFixed(1)}%`;
+// `today` is a live instant, not a date-only value — render in local time, not UTC.
 const iAmHereDate = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
   year: 'numeric',
 }).format(today);
 
+// Date-only value parsed as UTC midnight — format in UTC or it renders a day early.
 const dateLabel = (d: Date) =>
   new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(d);
 ---
 

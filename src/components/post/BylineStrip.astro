@@ -7,10 +7,12 @@ interface Props {
 
 const { author = 'Alex Fritz', publishedDate, readingMinutes } = Astro.props;
 
+// Date-only value parsed as UTC midnight — format in UTC or it renders a day early.
 const dateLabel = new Intl.DateTimeFormat('en-US', {
   month: 'long',
   day: 'numeric',
   year: 'numeric',
+  timeZone: 'UTC',
 }).format(publishedDate);
 ---
 

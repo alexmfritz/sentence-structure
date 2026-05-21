@@ -10,11 +10,13 @@ interface Props {
 
 const { entries } = Astro.props;
 
+// Date-only value parsed as UTC midnight — format in UTC or it renders a day early.
 const dateLabel = (d: Date) =>
   new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(d);
 
 const totalAcrossPages = entries.length;
