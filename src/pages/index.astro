@@ -5,7 +5,6 @@ import MosaicAnchorRow from '../components/homepage/MosaicAnchorRow.astro';
 import MosaicColumnShowcase from '../components/homepage/MosaicColumnShowcase.astro';
 import MosaicArchiveSampler from '../components/homepage/MosaicArchiveSampler.astro';
 import ManifestoStrip from '../components/homepage/ManifestoStrip.astro';
-import HamburgerMenu from '../components/chrome/HamburgerMenu.astro';
 import { getHomepageContent } from '../lib/homepage';
 
 const { hero, anchorRow, showcase, archiveSampler, isSparse } =
@@ -22,16 +21,7 @@ const { hero, anchorRow, showcase, archiveSampler, isSparse } =
     </h1>
   </header>
 
-  {
-    !hero && (
-      /* No Memoir posts: hamburger still needs to live somewhere visible. */
-      <div class="home-header__chrome-fallback">
-        <HamburgerMenu />
-      </div>
-    )
-  }
-
-  {hero && <Hero post={hero} />}
+  <Hero post={hero} />
 
   {anchorRow.length > 0 && <MosaicAnchorRow posts={anchorRow} />}
 
