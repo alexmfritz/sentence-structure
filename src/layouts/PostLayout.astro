@@ -224,8 +224,29 @@ const isOffTheRecord = column === 'off-the-record';
     padding-left: 1.5rem;
   }
 
+  /* Tailwind preflight strips the default bullet; restore an unordered
+     marker as a small column-accent square for clearer scanning. */
+  .post-body :global(ul) {
+    list-style: none;
+  }
+
   .post-body :global(li) {
-    margin: 0.25rem 0;
+    margin: 0.4rem 0;
+  }
+
+  .post-body :global(ul li) {
+    position: relative;
+  }
+
+  .post-body :global(ul li::before) {
+    content: '';
+    position: absolute;
+    left: -1.1rem;
+    top: 0.62em;
+    width: 0.34rem;
+    height: 0.34rem;
+    background: var(--column-400);
+    border-radius: 1px;
   }
 
   .post-body :global(hr) {
