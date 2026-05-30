@@ -53,6 +53,7 @@ const fullStory = await getFullStoryFor(post.id);
   publishedDate={post.data.publishedDate}
   tags={post.data.tags}
   body={post.body}
+  heroImage={post.data.heroImage}
   fullStoryUrl={fullStory ? `/memoir/${fullStory.id}` : undefined}
   fullStoryTitle={fullStory?.data.title}
 >
