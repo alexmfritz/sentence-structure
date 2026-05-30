@@ -147,12 +147,11 @@ export const COLUMN_EMPTY_STATES: Record<ColumnSlug, EmptyStateCopy> = {
     ],
   },
   hearsay: {
-    // DRAFT voice copy — Alex to rewrite in his own voice. Tells the
-    // spawn-story behind the epigraph (the "Dravis" origin) and the column's
-    // premise; intentionally omits the heavier Memoir material. Placement is
-    // final; the prose is not.
+    // Alex's voice copy. Tells the spawn-story behind the epigraph (the
+    // "Dravis" origin) and the column's premise; the heavier Memoir material
+    // is intentionally left for a future Memoir piece.
     manifesto:
-      "A man I'll call Dravis — a cellmate at Coyote Ridge, raised by a father who had done his own time — once handed me his father's one piece of advice, offered as if it were preparation: prison is an experience you can't get anywhere else. This is the column for the moments that prove him right. The things you'd swear were invented if you hadn't been standing there.",
+      "A man I'll call Dravis passed along his father's advice, as if it had prepared him for this. This is the column for the moments that prove those words right. The things you'd swear were made up if you hadn't been standing there.",
     placeholders: [
       { eyebrow: 'Forthcoming', title: '[ ~200 words / a thing that happened on the unit / no footnotes ]' },
     ],
