@@ -2,6 +2,8 @@
 
 You are Claude Code, working with **Alex Fritz** on his personal blog publication, **Sentence Structure**. This file is auto-loaded into every session opened in this directory; it captures the load-bearing context so a fresh session can act without re-deriving it.
 
+**This file is the single source of truth for build status and the forward plan**, superseding any external "Build Status & Forward Plan" document.
+
 ## What this is
 
 Personal blog about the prison experience. Six columns: Memoir, Concrete Truths, Economics of, Hearsay, Off the Record, Protective Factors. Voice for the publication is darkly comedic, memoir-first, outsider-legible. Tagline: "What They Don't Tell You." Build philosophy is **full design with empty states** — content fills in over time, the design ships complete from day one. Launch is not a priority; watching content fill the design is the motivation.
@@ -90,12 +92,12 @@ If `astro check` ever reports a Vite plugin type mismatch, run `npm ls vite` fir
 
 All seven build phases shipped via merged PRs. The publication's chrome, page templates, and a11y baseline are in place. The work that remains is **operational** (real content, real imagery, domain + deploy) and **iterative** (deferred refinements that fire on specific triggers — see "Deferred items" below). No new build phases are planned.
 
-- **Phase 1 — Foundation** ✅ [PR #1](https://github.com/alexmfritz/sentence-structure/pull/1). Astro + Tailwind v4 + Content Layer API + 16 placeholder posts.
+- **Phase 1 — Foundation** ✅ [PR #1](https://github.com/alexmfritz/sentence-structure/pull/1). Astro + Tailwind v4 + Content Layer API. The 16 placeholder posts that seeded the design have since been replaced by real pieces in `src/content/`.
 - **Phase 2 — Post template** ✅ [PR #2](https://github.com/alexmfritz/sentence-structure/pull/2). BaseLayout, PostLayout (column-agnostic, column-themed via `[data-column]` CSS vars), TopNav with `<details>` Columns dropdown, Footer, MDX components (PullQuote, Stat, BlockQuote, Sidenote, Figure), Memoir-only drop cap, per-column `[slug].astro`, ReadingProgress, NewsletterPrompt. Bracket markers in placeholder content converted; 7 of 16 files moved to `.mdx`. `remark-breaks` added so single newlines render as `<br>`.
 - **Phase 3 — Homepage** ✅ [PR #3](https://github.com/alexmfritz/sentence-structure/pull/3). Hero with translucent glass title card, three-row mosaic (anchor / column showcase / archive sampler), manifesto strip with sparse-vs-standard mode, MenuWheel (desktop staircase cascade with full keyboard nav) + HamburgerMenu (mobile full-screen).
 - **Phase 3.5 — Glass-surface tokenization.** Promoted ~17 inline `oklch()` translucents to 12 `--glass-*` semantic tokens in `@theme`; collapsed four per-component `prefers-reduced-transparency` blocks into one global token-override. Sets the retrofit path for any future light/HC-mode work to be a token-swap rather than per-component edits.
 - **Phase 4 — Column landings** ✅ [PR #4](https://github.com/alexmfritz/sentence-structure/pull/4). Base template (CT, EoO, PF) + Memoir spine variant (mini-spine, full vertical spine with phase blocks, "I am here" pulse marker) + OTR editorial-list variant (full poem bodies rendered inline with asterism separators). Empty states for each variant.
-- **Phase 5 — About page** ✅ [PR #5](https://github.com/alexmfritz/sentence-structure/pull/5). `/about` + `AboutLayout`, `WhereToStart` 5-column listing, placeholder essay scaffolding in `src/pages/about.mdx`. `ReadingProgress` gained a `variant` prop (`'column'` default, `'structural'` for about). Body width is 560px (slightly wider than post-page 480px) to read better against placeholder content density.
+- **Phase 5 — About page** ✅ [PR #5](https://github.com/alexmfritz/sentence-structure/pull/5). `/about` + `AboutLayout`, `WhereToStart` six-column listing, real manifesto-bio essay in `src/pages/about.mdx`. `ReadingProgress` gained a `variant` prop (`'column'` default, `'structural'` for about). Body width is 560px (slightly wider than post-page 480px) to read better against the essay's density.
 - **Phase 6 — Archive** ✅ [PR #6](https://github.com/alexmfritz/sentence-structure/pull/6). Filter chrome (column / phase / tag / year / sort), tile grid with data-attribute filtering, URL-state sync via `pushState`, "Load more" pagination at 24/page, no-match + threshold (<6 posts) empty states. Vanilla TS, no framework.
 - **Phase 7 — Polish + a11y** ✅ [PR #7](https://github.com/alexmfritz/sentence-structure/pull/7). 39 OKLCH contrast pairs computed at AA, text-tertiary lightness bumped 0.50 → 0.60. Global `prefers-reduced-motion` safety net. Sitewide skip-link + `<main id="main">` wrapper in BaseLayout. Global `:focus-visible` ring. Heading-hierarchy fixes (homepage h1, archive h2).
 
@@ -111,16 +113,16 @@ These were intentionally not built. Each has a stated trigger; if a future sessi
 - **OTR post page variant.** Currently uses standard PostLayout. Trigger: OTR posts feel templated against standard layout.
 - **Protective Factors listing variant.** Currently uses base template. Trigger: column populates and base feels wrong.
 - **Archive layout adaptation thresholds.** "Row-1 breathing-room layout" at <6 results. Built always-3-col grid. Trigger: filtered views routinely surface 1–6 results and feel under-laid-out.
-- **Tag "more" affordance** in archive filter chrome. Currently shows all 33 tags upfront. Trigger: tag count crosses ~50.
+- **Tag "more" affordance** in archive filter chrome. Currently shows all tags upfront (30 distinct across real content as of this writing). Trigger: tag count crosses ~50.
 - **Spine dense-row inline expansion** on hover/focus. Held until dense mode is implemented.
 - **`aria-current="page"`** on TopNav links. Polish-on-polish item.
 
 ## Real-content prerequisites for launch
 
-- **Manifesto-bio essay** at `src/pages/about.mdx` — replace the 6 `<p class="placeholder">` blocks with real markdown prose.
-- **Real generative-portrait imagery** for hero placeholder gradients (about hero, post hero, column landing feature heroes).
+- **Manifesto-bio essay** at `src/pages/about.mdx` — ✅ drafted (`lastUpdated: 2026-05-11`); no placeholder blocks remain. Refine on revision.
+- **Real generative-portrait imagery** — in progress. Real heroes/inline images exist in `src/assets/` (about, columns, per-piece); remaining placeholder gradients fill in as pieces publish.
 - **Real planned-piece descriptions** in `COLUMN_EMPTY_STATES` (`src/lib/column-landing.ts`) — currently generic-thematic.
-- **Real `COMMUNITY_CUSTODY_START` / `COMMUNITY_CUSTODY_END`** dates in `src/lib/memoir-spine.ts` — currently placeholder 2025-08-22 → 2026-08-22; the "I am here" position is computed from these.
+- **Real `COMMUNITY_CUSTODY_END`** date in `src/lib/memoir-spine.ts` — the one real-content date Alex still owes. `COMMUNITY_CUSTODY_START` is now `2025-05-23` (real); `END` is a refined estimate `2027-04-01` (~spring 2027 per Alex), exact date still TBD (FIXME in code). The "I am here" position is computed from both, so the marker stays approximate until the precise END lands.
 - **Newsletter form handler** — currently `<form onsubmit="return false">`. Wire to Formspree or similar.
 - **`/rss.xml` route** — Footer links to it but the route doesn't exist.
 

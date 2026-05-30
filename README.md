@@ -1,18 +1,19 @@
 # Sentence Structure
 
-A personal blog publication about the prison experience. Five columns of writing across two thematic groupings:
+A personal blog publication about the prison experience. Six columns of writing across two thematic groupings:
 
 | Column | Slug | Group |
 |---|---|---|
 | Memoir | `memoir` | prison experience |
 | Concrete Truths | `concrete-truths` | prison experience |
 | Economics of | `economics-of` | prison experience |
+| Hearsay | `hearsay` | prison experience |
 | Off the Record | `off-the-record` | adjacent personal work |
 | Protective Factors | `protective-factors` | adjacent personal work |
 
 Tagline: **"What They Don't Tell You."**
 
-The site is structurally complete through Phase 7 — all page types, all chrome, full a11y baseline. Remaining work is operational (real content, real imagery, domain + deploy) and editorial (writing the manifesto-bio, drafting real pieces, replacing placeholder copy). See `CLAUDE.md` for the load-bearing project context and current phase status.
+The site is structurally complete through Phase 7 — all page types, all chrome, full a11y baseline. Remaining work is operational (more real content, remaining imagery, domain + deploy) and editorial (drafting more real pieces across the columns). The manifesto-bio essay is written; placeholder posts have been replaced by real work. See `CLAUDE.md` for the load-bearing project context and current phase status.
 
 ## Stack
 
@@ -55,13 +56,15 @@ If `astro check` ever reports a Vite plugin type mismatch, run `npm ls vite` fir
 /concrete-truths/[slug]                    concrete-truths post pages
 /economics-of                              column landing — base template
 /economics-of/[slug]                       economics-of post pages
+/hearsay                                   column landing — vignette feed variant
+/hearsay/[slug]                            hearsay vignette pages
 /off-the-record                            column landing — editorial-list variant
 /off-the-record/[slug]                     off-the-record post pages
 /protective-factors                        column landing — base template
 /protective-factors/[slug]                 protective-factors post pages
 ```
 
-24 pages total at build time (16 placeholder posts + 5 column landings + homepage + /about + /archive). `/rss.xml` is referenced in the footer but the route is not yet built — deferred.
+Page count at build time: N posts + 6 column landings + homepage + /about + /archive. Content is real now and grows over time, so the total is a formula, not a fixed number. `/rss.xml` is referenced in the footer but the route is not yet built — deferred.
 
 ## Project structure
 
@@ -72,21 +75,22 @@ sentence-structure/
 ├── public/                            static assets (favicon, future imagery)
 ├── src/
 │   ├── content/
-│   │   ├── memoir/                    .md + .mdx post files (6 placeholder)
+│   │   ├── memoir/                    .mdx post files (1)
 │   │   ├── concrete-truths/           .mdx (2)
-│   │   ├── economics-of/              .mdx (2)
-│   │   ├── off-the-record/            .md poems (4)
+│   │   ├── economics-of/              .mdx (1)
+│   │   ├── hearsay/                   .md vignettes, ≤250 words (1)
+│   │   ├── off-the-record/            .mdx poems (1)
 │   │   └── protective-factors/        .mdx (2)
-│   ├── content.config.ts              Zod schemas: basePostSchema + memoirSchema (phase + experienceDate)
+│   ├── content.config.ts              shared basePostFields (title, deck?, publishedDate, tags, crisisResources) spread into each collection's schema fn with image() heroImage; memoir adds phase + experienceDate + hearsay references; hearsay is its own base collection
 │   ├── components/
 │   │   ├── chrome/                    TopNav, Footer, MenuWheel, HamburgerMenu, ReadingProgress, NewsletterPrompt
-│   │   ├── post/                      ArticleHeader, BylineStrip, ColumnTagPill, PhaseTagPill, MDX components
-│   │   ├── homepage/                  Hero, MosaicAnchorRow, MosaicColumnShowcase, MosaicArchiveSampler, ManifestoStrip
-│   │   ├── column-landing/            ColumnHeader, BaseTemplate, MemoirMiniSpine, MemoirSpine, OffTheRecordList, ColumnEmptyState, ColumnSubscribePrompt
+│   │   ├── post/                      ArticleHeader, BylineStrip, ColumnTagPill, PhaseTagPill, PullQuote, Sidenote, Stat, BlockQuote, Figure, ContentNote, LetterCallout, CrisisResources
+│   │   ├── homepage/                  Hero, MosaicAnchorRow, MosaicColumnShowcase, MosaicArchiveSampler, HearsayStrip, ManifestoStrip
+│   │   ├── column-landing/            ColumnHeader, BaseTemplate, MemoirMiniSpine, MemoirSpine, OffTheRecordList, HearsayFeed, ColumnEmptyState, ColumnSubscribePrompt
 │   │   ├── about/                     WhereToStart
 │   │   └── archive/                   FilterChrome, ResultsRegion, ArchiveEmptyState
-│   ├── layouts/                       BaseLayout, PostLayout, AboutLayout
-│   ├── lib/                           columns, memoir-spine, content, reading-time, homepage, column-landing, archive
+│   ├── layouts/                       BaseLayout, PostLayout, AboutLayout, HearsayLayout
+│   ├── lib/                           columns, memoir-spine, content, reading-time, homepage, column-landing, archive, hearsay, mdx-components
 │   ├── pages/                         route files
 │   └── styles/
 │       └── global.css                 Tailwind import + @theme tokens + base layer rules
@@ -129,11 +133,25 @@ Inline data like <Stat>$1.40</Stat> renders in IBM Plex Mono.
 <Figure caption="Caption text in italic Plex Sans." ratio="4:3" />
 
 <BlockQuote source="Citation">An external quotation, italic.</BlockQuote>
+
+<ContentNote>An editorial heads-up before a difficult piece.</ContentNote>
+
+<LetterCallout>Text set as a letter from inside.</LetterCallout>
 ```
+
+Any piece that touches suicidality or self-harm material opts into the standing crisis-support block by setting `crisisResources: true` in frontmatter. The block is layout-rendered (PostLayout + HearsayLayout) and its copy lives once in `CrisisResources.astro` — never write it into the body.
+
+### Hearsay
+
+A vignette is a `.md`/`.mdx` file in `src/content/hearsay/`. It is **≤250 words of prose**, enforced at build in `src/pages/hearsay/[slug].astro` `getStaticPaths` — the remark plugin (`plugins/remark-hearsay-wordcount.mjs`) only counts the words; a `throw` inside a remark plugin is swallowed by Astro's glob loader and can't gate the build.
+
+Vignettes have no `phase` and no `experienceDate`. `heroImage`, `deck`, and even `title` are optional — an untitled vignette falls back to its first line.
+
+The Memoir↔Hearsay cross-link is authored **once, on the Memoir side**: add `hearsay: [vignette-id]` to the Memoir post's frontmatter. The vignette's "Full story →" backlink is derived (`lib/hearsay.ts → getFullStoryFor`). **Never** add a link field to a vignette.
 
 ### About page
 
-`src/pages/about.mdx` currently holds the placeholder scaffolding (six bracketed-mono paragraphs across two H2 subheads). Replace each `<p class="placeholder">[ ... ]</p>` with real markdown prose; the `.placeholder` styling drops automatically when the class is removed. Move `<WhereToStart />` wherever fits the essay flow.
+`src/pages/about.mdx` holds the real manifesto-bio essay ("How I Got Here"). It is written, not scaffolding. `<WhereToStart />` sits near the end of the essay.
 
 Update `lastUpdated` in the frontmatter when publishing revisions.
 

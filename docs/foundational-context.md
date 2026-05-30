@@ -9,22 +9,27 @@ VOICE
 Darkly comedic, memoir-first, with space for journalistic integrity backed by real statistics. Outsider-legible, not academic, not New Yorker. Personal, grounded, honest. The writing carries the seriousness; design and tone do not over-signal it.
 
 COLUMN STRUCTURE
-Five columns, two thematic groupings.
+Six columns, two thematic groupings.
 
 Prison-experience writing:
 
 Memoir - personal narrative writing about the prison experience. Color: coral. See MEMOIR SPINE for the column's chronological architecture.
 Concrete Truths - journalistic criticism with statistics, data, and citations. The serious column. Color: blue.
 Economics of - satirical economic analysis. "The Economics of Ramen," "The Economics of the Phone Call," "The Economics of the Visit," "The Economics of Good Time." Color: amber.
+Hearsay - firsthand short-form vignettes from inside, capped at 250 words. Color: rose (hue 340). The fragment to Memoir's developed narrative: a vignette is a single remembered moment, told plainly, with no apparatus — no phase, no experienceDate, no spine, no drop cap. The 250-word ceiling is the column's editorial identity, not a technical limit; it forces the snapshot. Enforcement lives in hearsay/[slug].astro getStaticPaths (a throw inside the remark word-count plugin is swallowed by Astro's content loader and cannot gate the build).
+
+The name carries the irony the column runs on: "hearsay" is the inadmissible, the secondhand, the testimony a court won't take — except every piece here is firsthand. The column header carries a persistent epigraph that states the thesis without explaining it: "Prison is an experience you can't get anywhere else." — a cellmate, quoting his father. The epigraph renders at every post count, replacing the plain column deck.
+
+Memoir and Hearsay are linked but directional. A vignette can be the seed of a fuller Memoir piece; when it is, the link is authored once, on the Memoir post (hearsay: [vignette-id] in frontmatter). The vignette's "Full story →" backlink is derived from that reference, never authored on the vignette — no vignette is ever reopened to add a link.
 
 Adjacent personal work:
-4. Off the Record - poetry and personal writing developed as a coping skill, not necessarily about prison. Carries the dual meaning of "off the journalistic record" and "on the personal record." Color: sage.
-5. Protective Factors - CBT/DBT content learned in rehabilitative programming. Clinical term with legitimate weight from suicide prevention, addiction recovery, and forensic mental health contexts. Dual reading of clinical concept and personal practice. Color: teal.
+5. Off the Record - poetry and personal writing developed as a coping skill, not necessarily about prison. Carries the dual meaning of "off the journalistic record" and "on the personal record." Color: sage.
+6. Protective Factors - CBT/DBT content learned in rehabilitative programming. Clinical term with legitimate weight from suicide prevention, addiction recovery, and forensic mental health contexts. Dual reading of clinical concept and personal practice. Color: teal.
 
-Note on the column palette: the five column colors (coral, blue, amber, sage, teal) are reserved for column identity and are the only colors used to label posts, tag pills, related-tile fills, progress bars, and column landing pages. The manifesto strip and newsletter prompt use a structural purple/indigo, deliberately separate from the column palette. Purple/indigo is the publication's editorial voice color; column colors are the labels.
+Note on the column palette: the six column colors (coral, blue, amber, rose, sage, teal) are reserved for column identity and are the only colors used to label posts, tag pills, related-tile fills, progress bars, and column landing pages. The manifesto strip and newsletter prompt use a structural purple/indigo, deliberately separate from the column palette. Purple/indigo is the publication's editorial voice color; column colors are the labels.
 
 MEMOIR SPINE
-The Memoir column has a chronological architecture not shared by the other four columns.
+The Memoir column has a chronological architecture not shared by the other columns.
 
 Phase enum (Zod):
 - jail
@@ -43,7 +48,7 @@ Posts can be written in any order. A post about week-one Shelton drafted years a
 
 Edge case noted, not yet resolved: transitions between phases (e.g. the bus ride from Shelton to Coyote Ridge) are real experiences that don't sit cleanly in either phase. Convention to be set when the first transition post is written; current lean is to assign to the destination phase with experienceDate equal to arrival day.
 
-The other four columns (Concrete Truths, Economics of, Off the Record, Protective Factors) do not carry phase or experienceDate fields. Their schemas use publishedDate only. Memoir extends a base post schema rather than putting these as optional global fields, so the type system catches a missing phase at build time.
+The other columns (Concrete Truths, Economics of, Hearsay, Off the Record, Protective Factors) do not carry phase or experienceDate fields. Their schemas use publishedDate only. Memoir extends a base post schema rather than putting these as optional global fields, so the type system catches a missing phase at build time.
 
 DESIGN DIRECTION
 Aesthetic references:
@@ -142,6 +147,9 @@ Mobile clamp values. Display tier scales smoothly between mobile and desktop. Ed
 - text-hero: clamp(36px, 2.3vw + 29px, 52px). 36px floor at ≤320px, locks at 52px ≥ 1024px.
 - text-manifesto: clamp(42px, 3.13vw + 32px, 64px). 42px floor at ≤320px, locks at 64px ≥ 1024px.
 
+WELLBEING SURFACES
+Crisis-support block. A publication-wide, opt-in standing block at the foot of any piece that touches suicidality or self-harm material, enabled per-post via crisisResources: true. Copy lives in a single component and is never duplicated per file. Related editorial callouts — content notes and letter callouts — are available as components for pieces that need them.
+
 TECH STACK
 
 Astro for the framework
@@ -162,10 +170,11 @@ Vertical scroll, desktop sized for ~680-1200px content width.
 Zone 01 - Header. Wordmark left, minimal. Menu wheel anchored to top-right of hero (not in this header bar) on desktop, hamburger on mobile.
 Zone 02 - Hero. Full-bleed image, 2:1 aspect, with translucent glass title card sitting low and left. Single feature, not a carousel. Reserved for latest memoir post or signature features. Menu wheel anchors to top-right of this zone on desktop, opening as down-left wedge into the hero's negative space.
 Zone 03 - Mosaic Row 1, the anchor row. One large landscape tile (4x3) plus two stacked square tiles (2x2 each) on the right. Large tile gets editorial weight. Three columns visible above or near the fold.
-Zone 04 - Mosaic Row 2, the column showcase. Three vertical 2x3 tiles, one for each prison-experience column (Memoir, Concrete Truths, Economics of) showing the most recent post in each. (To be revisited with five columns - may need to expand.)
+Zone 04 - Mosaic Row 2, the column showcase. Three vertical 2x3 tiles, one for each prison-experience column (Memoir, Concrete Truths, Economics of) showing the most recent post in each. The showcase remains these three prison-experience long-form columns; Hearsay surfaces through its own strip (Zone 06) rather than the showcase, and the adjacent columns (Off the Record, Protective Factors) surface through nav and footer.
 Zone 05 - Mosaic Row 3, the archive sampler. Four small 1x1 tiles. Three older posts plus a "view all" tile.
-Zone 06 - Manifesto strip. "What They Don't Tell You" tagline in serif (text-manifesto), large weight, generous negative space. Links to about page. Sits more prominently and larger early on while content is sparse, then shrinks to its planned position as content fills in.
-Zone 07 - Footer. All five columns, archive, about, newsletter signup, RSS, social.
+Zone 06 - Hearsay strip. A horizontal strip surfacing recent vignettes newest-first, rendered only when at least one vignette exists. Sits below the archive sampler and above the manifesto strip.
+Zone 07 - Manifesto strip. "What They Don't Tell You" tagline in serif (text-manifesto), large weight, generous negative space. Links to about page. Sits more prominently and larger early on while content is sparse, then shrinks to its planned position as content fills in.
+Zone 08 - Footer. All six columns, archive, about, newsletter signup, RSS, social.
 Mobile: mosaic collapses to single column with varying tile heights preserved. Menu wheel replaced by hamburger opening full-screen typographic menu.
 
 POST PAGE INFORMATION ARCHITECTURE
@@ -198,8 +207,10 @@ Zone 08 - Newsletter prompt. Quiet single-field signup, structural purple accent
 Zone 09 - Footer. Same as homepage.
 The template is column-agnostic but column-themed. Each column inherits a color and treatment variant: progress bar accent, column tag fill, pull quote treatment, inline image accent, related-post tiles. Off the Record poetry collapses certain elements (no hero, shorter body, possibly no pull quotes). Protective Factors leans on sidenotes and structured callouts. Memoir posts surface their phase tag alongside the column tag. Memoir posts also receive the drop cap treatment on the first body paragraph (see TREATMENTS).
 
+Hearsay vignette post page. Hearsay posts use a dedicated minimal .vignette layout rather than the column-agnostic PostLayout. No drop cap (that is Memoir-only), no reading-progress bar (a 250-word piece doesn't earn one). Column pill links to /hearsay; title is optional with a first-line fallback; byline is author + date only; hero image optional. When a Memoir post references the vignette, a derived "Full story →" affordance links through to it. The standing crisis-support block renders when the piece sets crisisResources: true.
+
 COLUMN LANDING PAGE INFORMATION ARCHITECTURE
-Each column has its own landing page — the page readers arrive at when clicking a column tag pill, the column name in nav, or "View all" from a homepage tile. Five columns, three structural patterns: a base template (Concrete Truths, Economics of, Protective Factors), the Memoir spine variant, and the Off the Record editorial-list variant.
+Each column has its own landing page — the page readers arrive at when clicking a column tag pill, the column name in nav, or "View all" from a homepage tile. Six columns, four structural patterns: a base template (Concrete Truths, Economics of, Protective Factors), the Memoir spine variant, the Off the Record editorial-list variant, and the Hearsay vignette-feed variant.
 
 Base template zones:
 Zone 01 - Top nav. Same as post page. No menu wheel.
@@ -264,10 +275,16 @@ Off the Record empty state. Same logic as base-template empty state, adapted to 
 - Zones 03 + 04 replaced — a SINGLE placeholder piece rendered in the editorial-list format. Sage 600 dashed border, reduced background opacity (~0.4), bracketed title describing what an early piece will likely be, a few bracketed lines of placeholder verse in mono describing the form ("[ ~12 lines / free verse / on the silence after intake ]"), "Forthcoming" in mono at the bottom. Not three placeholder tiles — that's a mosaic pattern, and the whole point of this column is that mosaic is wrong here. One placeholder, full-width in the reading column, surrounded by chapbook spacing. The empty list is the design.
 - Zone 05 replaced — column-specific subscribe prompt in sage. Same anti-marketing copy: "A short note when the first piece publishes. No promotion, no list resale, no other publications."
 
+Hearsay vignette-feed variant. Hearsay replaces zones 03 + 04 with a single newest-first feed that renders full vignette bodies inline — closer to Off the Record's chapbook logic than to the mosaic, but its own shape. Each entry: an eyebrow with the date (the date is the permalink) and tags, an optional title (untitled vignettes render their first line), then the full body. Entries are separated by a thin rule, not the asterism — the asterism is Off the Record's; the rule keeps Hearsay's feed reading as a sequence of testimonies rather than a chapbook.
+
+Sparse-state manifesto. Below a threshold of four posts the column header carries an origin-story manifesto (the same recede-as-it-fills logic as the homepage manifesto strip). The column launches at one post, so the manifesto must persist past empty, not only at zero.
+
+Empty state. At zero posts the feed shows a single bracketed-mono placeholder entry describing what a vignette will be ("[ ~200 words / a thing that happened on the unit / no footnotes, no sources, no recourse — just trust me, I was there ]") and the column-specific subscribe prompt replaces the publication-wide newsletter. Once at least one vignette exists, the publication-wide newsletter returns.
+
 ABOUT PAGE INFORMATION ARCHITECTURE
 The about page is a single editorial document — a manifesto-bio fused essay rather than a brochure with sections. The publication's authority comes from lived experience, so the editorial promise and the writer's experience are the same essay. Title: "How I Got Here." Plain, memoir-first, lets the essay underneath be ambitious without the title doing literary lifting. The publication name carries the wordplay; the about page does not need to.
 
-Vertical scroll, body content max width ~480px, same reading measure as post pages.
+Vertical scroll, body content max width ~560px — slightly wider than the post-page measure; it reads better against the essay's density. The essay is now written ("How I Got Here"); the page no longer ships on placeholder.
 
 Zone 00 - Reading progress bar. Same treatment as post page. Accent color is structural purple/indigo (publication-wide page, same logic as the manifesto strip and newsletter prompt — about is not a column-themed page).
 
@@ -283,14 +300,14 @@ Zone 03 - Hero image. Full-bleed, 2:1 aspect, no overlay text (title sits above)
 Zone 04 - Byline strip, minimal. text-meta. "Last updated [date]" only. No author (the about page IS the byline of the publication), no read time, no share affordance. The currency date matters because the manifesto may be revised after major life events; the date tells readers what version they're reading.
 
 Zone 05 - Body essay. The manifesto-bio fused.
-- text-body (Newsreader Regular 18px), ~480px measure.
+- text-body (Newsreader Regular 18px), ~560px measure.
 - No drop cap. Drop cap is Memoir-column-only per TREATMENTS; about is not Memoir.
 - No pull quotes. About has no column accent for the pull quote treatment to inherit, and the page should read as prose rather than magazine feature. The voice carries it.
 - text-h2 subheadings available for sectional structure if the essay calls for it; structure to be determined at writing time.
 - Inline images (text-caption captions) optional, narrower than hero, same generative-portrait treatment if used.
 - Block quote treatment available if external sources are cited (court documents, regulations, statistics that contextualize the publication's existence).
 
-Zone 06 - Where to start. Quiet typographic callout near the end of the essay. Five column names listed with one-sentence editorial descriptions, inline links to each column landing page. Not tiles — text. Tiles would compete with the homepage's column showcase and feel brochure-like; a typographic list keeps the page editorial.
+Zone 06 - Where to start. Quiet typographic callout near the end of the essay. Six column names listed with one-sentence editorial descriptions, inline links to each column landing page. Not tiles — text. Tiles would compete with the homepage's column showcase and feel brochure-like; a typographic list keeps the page editorial.
 
 Zone 07 - Contact. text-meta. Single email address (placeholder until a publication-specific email is created closer to launch). No PO box, no Signal, no other paths at this time. If reachability needs expand later, this zone accommodates additional lines without restructuring.
 
@@ -321,7 +338,7 @@ Zone 02 - Page header. Eyebrow: "Archive" (text-eyebrow). Title: "Archive" at te
 Zone 03 - Filter chrome. Top of page, scrolls away with content. Not sticky — sticky filter UI feels SaaS-like and fights the editorial tone; if the reader needs to re-filter, scrolling back up is fine.
 
 Dimensions in order of editorial weight:
-- Column. Pill-style toggle: all five columns plus "All." Active state in column accent color. Single-select.
+- Column. Pill-style toggle: all six columns plus "All." Active state in column accent color. Single-select.
 - Tag. Inline pill list of most-used publication-wide tags, with "more" affordance to expand the full list. Sage-neutral background — tags cross columns, so column-coloring would mislead. Multi-select.
 - Year. Dropdown by publishedDate year. Single-select. Defaults to "All years."
 - Sort. Dropdown: "Newest first" (default), "Oldest first." When column = Memoir, adds "By experience date."
