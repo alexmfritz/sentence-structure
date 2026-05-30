@@ -1,0 +1,69 @@
+---
+// Block callout for letter-based DBT skill items (STOP's S/T/O/P,
+// ABC PLEASE's A/B/C and PL/E/A/S/E). Renders the letter + action as
+// a column-accented heading with a pull-quote-style left rule, and
+// the explanation in the slot as regular body text. Inherits the
+// column accent from the .post-body[data-column] ancestor.
+//
+// Not an <aside> (would pollute the landmark structure — STOP has 4
+// callouts and ABC PLEASE has 8). Plain <div> with an <h3> heading.
+
+interface Props {
+  letter: string;
+  action: string;
+}
+
+const { letter, action } = Astro.props;
+---
+
+<div class="letter-callout">
+  <h3 class="letter-callout__heading">
+    <span class="letter-callout__letter">{letter}</span>
+    <span class="letter-callout__sep" aria-hidden="true"> — </span>
+    <span class="letter-callout__action">{action}</span>
+  </h3>
+  <div class="letter-callout__body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .letter-callout {
+    border-left: 3px solid var(--column-400);
+    padding-left: 22px;
+    margin: 1.75rem 0;
+  }
+
+  /* Compound selector to beat PostLayout's `.post-body :global(h3)` rule
+     (specificity 0,1,1), which would otherwise force font-sans / 19px /
+     neutral color on our heading. */
+  .letter-callout .letter-callout__heading {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 500;
+    color: var(--column-100);
+    margin: 0 0 0.85rem;
+  }
+
+  .letter-callout__letter {
+    font-weight: 700;
+  }
+
+  .letter-callout__sep {
+    color: var(--column-200);
+  }
+
+  .letter-callout__body {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--color-text);
+  }
+
+  /* Trim the trailing margin on the last paragraph inside the callout so
+     the body content doesn't leave dead space below the column-rule. */
+  .letter-callout .letter-callout__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
