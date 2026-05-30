@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'zod';
 
@@ -28,6 +28,9 @@ const memoir = defineCollection({
       heroImage: image().optional(),
       phase: phaseEnum,
       experienceDate: z.coerce.date(),
+      // Vignettes this story expands. Single source of the cross-link;
+      // the vignette-side "Full story →" is derived from this (lib/hearsay.ts).
+      hearsay: z.array(reference('hearsay')).optional(),
     }),
 });
 
@@ -55,12 +58,22 @@ const protectiveFactors = defineCollection({
     z.object({ ...basePostFields, heroImage: image().optional() }),
 });
 
+// Hearsay — firsthand short-form vignettes. Base schema only (no phase /
+// experienceDate). The 250-word cap is enforced at render in
+// plugins/remark-hearsay-wordcount.mjs, not here — Zod can't see the body.
+const hearsay = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/hearsay' }),
+  schema: ({ image }) =>
+    z.object({ ...basePostFields, heroImage: image().optional() }),
+});
+
 export const collections = {
   memoir,
   'concrete-truths': concreteTruths,
   'economics-of': economicsOf,
   'off-the-record': offTheRecord,
   'protective-factors': protectiveFactors,
+  hearsay,
 };
 
 export type Phase = z.infer<typeof phaseEnum>;

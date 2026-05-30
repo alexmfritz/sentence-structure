@@ -5,10 +5,13 @@ import MosaicAnchorRow from '../components/homepage/MosaicAnchorRow.astro';
 import MosaicColumnShowcase from '../components/homepage/MosaicColumnShowcase.astro';
 import MosaicArchiveSampler from '../components/homepage/MosaicArchiveSampler.astro';
 import ManifestoStrip from '../components/homepage/ManifestoStrip.astro';
+import HearsayStrip from '../components/homepage/HearsayStrip.astro';
 import { getHomepageContent } from '../lib/homepage';
+import { getHearsayPosts } from '../lib/hearsay';
 
 const { hero, anchorRow, showcase, archiveSampler, isSparse } =
   await getHomepageContent();
+const hearsayPosts = await getHearsayPosts();
 ---
 
 <BaseLayout
@@ -32,6 +35,8 @@ const { hero, anchorRow, showcase, archiveSampler, isSparse } =
       <MosaicArchiveSampler posts={archiveSampler} />
     )
   }
+
+  {hearsayPosts.length > 0 && <HearsayStrip posts={hearsayPosts} />}
 
   <ManifestoStrip isSparse={isSparse} />
 </BaseLayout>

@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import HearsayLayout from '../../layouts/HearsayLayout.astro';
+import PullQuote from '../../components/post/PullQuote.astro';
+import Sidenote from '../../components/post/Sidenote.astro';
+import Stat from '../../components/post/Stat.astro';
+import BlockQuote from '../../components/post/BlockQuote.astro';
+import Figure from '../../components/post/Figure.astro';
+import { extractFirstLine } from '../../lib/content';
+import { getFullStoryFor, HEARSAY_WORD_LIMIT } from '../../lib/hearsay';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('hearsay');
+  return Promise.all(
+    posts.map(async (post) => {
+      // Enforce the 250-word law here, where a throw actually fails the
+      // build. Uses the remark plugin's text-node count (MDX markup excluded).
+      const { remarkPluginFrontmatter } = await render(post);
+      const wordCount = remarkPluginFrontmatter?.wordCount;
+      if (typeof wordCount !== 'number') {
+        throw new Error(
+          `Hearsay "${post.id}": word count unavailable (did the vignette fail to render?).`,
+        );
+      }
+      if (wordCount > HEARSAY_WORD_LIMIT) {
+        throw new Error(
+          `Hearsay vignette exceeds ${HEARSAY_WORD_LIMIT} words (${wordCount}): ${post.id}`,
+        );
+      }
+      return { params: { slug: post.id }, props: { post } };
+    }),
+  );
+}
+
+interface Props {
+  post: CollectionEntry<'hearsay'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const firstLine = post.data.title.trim()
+  ? undefined
+  : extractFirstLine(post.body ?? '');
+
+const fullStory = await getFullStoryFor(post.id);
+---
+
+<HearsayLayout
+  title={post.data.title}
+  deck={post.data.deck}
+  firstLine={firstLine}
+  publishedDate={post.data.publishedDate}
+  tags={post.data.tags}
+  body={post.body}
+  fullStoryUrl={fullStory ? `/memoir/${fullStory.id}` : undefined}
+  fullStoryTitle={fullStory?.data.title}
+>
+  <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+</HearsayLayout>

@@ -1,0 +1,199 @@
+---
+import { getCollection, render } from 'astro:content';
+import PullQuote from '../post/PullQuote.astro';
+import Sidenote from '../post/Sidenote.astro';
+import Stat from '../post/Stat.astro';
+import BlockQuote from '../post/BlockQuote.astro';
+import Figure from '../post/Figure.astro';
+
+const posts = (await getCollection('hearsay')).sort(
+  (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime(),
+);
+
+const rendered = await Promise.all(
+  posts.map(async (post) => {
+    const { Content } = await render(post);
+    return { post, Content };
+  }),
+);
+
+const isEmpty = rendered.length === 0;
+
+// Date-only value parsed as UTC midnight — format in UTC or it renders a day early.
+const dateLabel = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(d);
+---
+
+<section class="hearsay-feed" data-column="hearsay" aria-label="Vignettes">
+  {
+    isEmpty && (
+      <article class="hearsay-entry hearsay-entry--placeholder">
+        <div class="hearsay-entry__eyebrow">
+          <span class="hearsay-entry__date">Forthcoming</span>
+        </div>
+        <p class="hearsay-entry__placeholder-body">
+          [ ~200 words / a thing that happened on the unit / no footnotes,
+          no sources, no recourse — just trust me, I was there ]
+        </p>
+        <p class="hearsay-entry__placeholder-status">Forthcoming</p>
+      </article>
+    )
+  }
+
+  {
+    rendered.map(({ post, Content }, i) => (
+      <article class="hearsay-entry">
+        {i > 0 && <hr class="hearsay-sep" aria-hidden="true" />}
+
+        <header class="hearsay-entry__eyebrow">
+          <a class="hearsay-entry__date" href={`/hearsay/${post.id}`}>
+            <time datetime={post.data.publishedDate.toISOString()}>
+              {dateLabel(post.data.publishedDate)}
+            </time>
+          </a>
+          {post.data.tags.length > 0 && (
+            <span class="hearsay-entry__tags">
+              {post.data.tags.map((tag, j) => (
+                <span>
+                  {j > 0 && <span class="hearsay-entry__tag-sep"> · </span>}
+                  {tag}
+                </span>
+              ))}
+            </span>
+          )}
+        </header>
+
+        {post.data.title.trim() && (
+          <h2 class="hearsay-entry__title">
+            <a href={`/hearsay/${post.id}`}>{post.data.title}</a>
+          </h2>
+        )}
+
+        <div class="hearsay-entry__body">
+          <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+        </div>
+      </article>
+    ))
+  }
+</section>
+
+<style>
+  .hearsay-feed {
+    max-width: 480px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .hearsay-entry__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .hearsay-entry__date {
+    color: var(--column-200);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .hearsay-entry__date:hover {
+    color: var(--column-100);
+  }
+
+  .hearsay-entry__tags {
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0;
+  }
+
+  .hearsay-entry__tag-sep {
+    color: var(--color-text-tertiary);
+  }
+
+  .hearsay-entry__title {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0 0 0.85rem;
+  }
+
+  .hearsay-entry__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .hearsay-entry__title a:hover {
+    color: var(--column-200);
+  }
+
+  /* Prose body — text-body measure/leading, NOT verse. */
+  .hearsay-entry__body {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--color-text);
+  }
+
+  .hearsay-entry__body :global(p) {
+    margin: 0 0 1rem;
+  }
+
+  .hearsay-entry__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .hearsay-entry__body :global(strong) {
+    font-weight: 600;
+  }
+
+  .hearsay-entry__body :global(em) {
+    font-style: italic;
+  }
+
+  /* Feed separator — a hairline row rule, deliberately tighter than the
+     OTR asterism. A feed is a stream of discrete rows; a row-like rule is
+     correct here where it would read as utilitarian in OTR's verse. */
+  .hearsay-sep {
+    border: none;
+    border-top: 1px solid var(--column-600);
+    margin: 2rem 0;
+  }
+
+  /* Empty-state placeholder entry — feed-shaped, single instance. */
+  .hearsay-entry--placeholder {
+    border: 1px dashed var(--column-600);
+    background: color-mix(in oklch, var(--column-500) 8%, transparent);
+    border-radius: 4px;
+    padding: 1.75rem;
+    opacity: 0.85;
+  }
+
+  .hearsay-entry__placeholder-body {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  .hearsay-entry__placeholder-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+</style>

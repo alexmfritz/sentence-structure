@@ -122,6 +122,17 @@
   --color-protective-factors-500: oklch(0.42 0.14 195);
   --color-protective-factors-600: oklch(0.30 0.08 195);
 
+  /* Hearsay — rose/magenta (hue ~340)
+     Sixth column; sits in the gap between structural purple (280) and
+     coral (25). Hue nudged to 340 (rose) rather than 330 to keep clear
+     separation from the structural-purple voice surfaces. */
+  --color-hearsay-100: oklch(0.92 0.04 340);
+  --color-hearsay-200: oklch(0.82 0.10 340);
+  --color-hearsay-300: oklch(0.68 0.16 340);
+  --color-hearsay-400: oklch(0.55 0.20 340); /* primary accent */
+  --color-hearsay-500: oklch(0.43 0.18 340);
+  --color-hearsay-600: oklch(0.30 0.10 340);
+
   /* Structural purple/indigo — publication voice color
      Used for manifesto strip, post-page newsletter prompt,
      about-page reading progress bar. NEVER for column accents. */
@@ -243,6 +254,15 @@
     --column-400: var(--color-protective-factors-400);
     --column-500: var(--color-protective-factors-500);
     --column-600: var(--color-protective-factors-600);
+  }
+
+  [data-column='hearsay'] {
+    --column-100: var(--color-hearsay-100);
+    --column-200: var(--color-hearsay-200);
+    --column-300: var(--color-hearsay-300);
+    --column-400: var(--color-hearsay-400);
+    --column-500: var(--color-hearsay-500);
+    --column-600: var(--color-hearsay-600);
   }
 
   /* ============================================================

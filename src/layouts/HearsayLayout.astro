@@ -1,0 +1,243 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TopNav from '../components/chrome/TopNav.astro';
+import { COLUMNS } from '../lib/columns';
+import { makeExcerpt } from '../lib/content';
+
+interface Props {
+  title: string;
+  deck?: string;
+  firstLine?: string;
+  publishedDate: Date;
+  tags: string[];
+  body?: string;
+  fullStoryUrl?: string;
+  fullStoryTitle?: string;
+}
+
+const {
+  title,
+  deck,
+  firstLine,
+  publishedDate,
+  tags,
+  body,
+  fullStoryUrl,
+  fullStoryTitle,
+} = Astro.props;
+
+const meta = COLUMNS['hearsay'];
+const hasTitle = title.trim().length > 0;
+const titleForHead =
+  title.trim() ||
+  firstLine?.replace(/^[\s>*_`#-]+/, '').slice(0, 60) ||
+  'Untitled';
+const description = deck ?? makeExcerpt(body) ?? undefined;
+
+const dateLabel = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+}).format(publishedDate);
+---
+
+<BaseLayout
+  title={`${titleForHead} — ${meta.name} — Sentence Structure`}
+  description={description}
+>
+  <div class="vignette-shell" data-column="hearsay">
+    <TopNav />
+
+    <article class="vignette">
+      <header class="vignette__head">
+        <a class="vignette__pill" href="/hearsay">Hearsay</a>
+        {hasTitle && <h1 class="vignette__title">{title}</h1>}
+        <p class="vignette__meta">
+          <span class="vignette__author">Alex Fritz</span>
+          <span class="vignette__sep" aria-hidden="true">·</span>
+          <time datetime={publishedDate.toISOString()}>{dateLabel}</time>
+        </p>
+      </header>
+
+      <div class="vignette__body" data-column="hearsay">
+        <slot />
+      </div>
+
+      {
+        fullStoryUrl && (
+          <a class="vignette__full-story" href={fullStoryUrl}>
+            Full story{fullStoryTitle ? `: ${fullStoryTitle}` : ''} &rarr;
+          </a>
+        )
+      }
+
+      {
+        tags.length > 0 && (
+          <div class="vignette__tags">
+            <ul>
+              {tags.map((tag) => (
+                <li>
+                  <a href={`/archive?tags=${encodeURIComponent(tag)}`}>{tag}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <a class="vignette__back" href="/hearsay">&larr; Back to Hearsay</a>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .vignette {
+    padding: 2rem 1.5rem 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .vignette__head {
+    margin-bottom: 1.5rem;
+  }
+
+  .vignette__pill {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--column-100);
+    background: color-mix(in oklch, var(--column-500) 30%, var(--color-bg-elevated));
+    border: 1px solid var(--column-400);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    text-decoration: none;
+    margin-bottom: 1rem;
+  }
+
+  .vignette__title {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 1.5vw + 22px, 36px);
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 0.75rem;
+  }
+
+  .vignette__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .vignette__author {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .vignette__sep {
+    color: var(--color-text-tertiary);
+  }
+
+  .vignette__body {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--color-text);
+    margin-bottom: 2rem;
+  }
+
+  .vignette__body :global(p) {
+    margin: 0 0 1.25rem;
+  }
+
+  .vignette__body :global(strong) {
+    font-weight: 600;
+  }
+
+  .vignette__body :global(em) {
+    font-style: italic;
+  }
+
+  .vignette__body :global(a) {
+    color: var(--column-200);
+    text-decoration: underline;
+    text-decoration-color: var(--column-500);
+    text-underline-offset: 0.2em;
+  }
+
+  .vignette__body :global(a:hover) {
+    text-decoration-color: var(--column-300);
+  }
+
+  .vignette__full-story {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--column-200);
+    text-decoration: none;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--column-600);
+    width: 100%;
+  }
+
+  .vignette__full-story:hover {
+    color: var(--column-100);
+  }
+
+  .vignette__tags {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .vignette__tags ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .vignette__tags a {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  .vignette__tags a:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-tertiary);
+  }
+
+  .vignette__back {
+    display: inline-block;
+    margin: 3rem 0 4rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  .vignette__back:hover {
+    color: var(--color-text);
+  }
+</style>

@@ -12,7 +12,8 @@ export type ColumnEntry =
   | CollectionEntry<'concrete-truths'>
   | CollectionEntry<'economics-of'>
   | CollectionEntry<'off-the-record'>
-  | CollectionEntry<'protective-factors'>;
+  | CollectionEntry<'protective-factors'>
+  | CollectionEntry<'hearsay'>;
 
 export interface BaseTemplateContent {
   isEmpty: boolean;
@@ -41,6 +42,8 @@ async function getColumnEntries(column: ColumnSlug): Promise<ColumnEntry[]> {
       return getCollection('off-the-record');
     case 'protective-factors':
       return getCollection('protective-factors');
+    case 'hearsay':
+      return getCollection('hearsay');
   }
 }
 
@@ -141,6 +144,13 @@ export const COLUMN_EMPTY_STATES: Record<ColumnSlug, EmptyStateCopy> = {
       { eyebrow: 'CBT', title: '[ Radical acceptance, in practice ]' },
       { eyebrow: 'CBT', title: '[ Cognitive distortions and how to catch them ]' },
       { eyebrow: 'DBT', title: '[ Distress tolerance for life on the outside ]' },
+    ],
+  },
+  hearsay: {
+    manifesto:
+      'Firsthand short-form vignettes — the punchy, self-contained "yes, this really happened." The deliberately unrigorous shadow of Concrete Truths: one column is sourced and cited, this one is trust me, I was there. Every piece runs 250 words or less.',
+    placeholders: [
+      { eyebrow: 'Forthcoming', title: '[ ~200 words / a thing that happened on the unit / no footnotes ]' },
     ],
   },
 };
