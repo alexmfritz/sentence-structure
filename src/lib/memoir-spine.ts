@@ -57,8 +57,7 @@ export function groupByPhase(posts: MemoirEntry[]): Record<Phase, MemoirEntry[]>
   return grouped;
 }
 
-// PLACEHOLDER — replace with Alex's real community custody dates before
-// the spine renders against truth. Current values mirror the placeholder
-// content's First Coffee piece (experienceDate: 2025-08-22).
-export const COMMUNITY_CUSTODY_START = new Date('2025-08-22');
-export const COMMUNITY_CUSTODY_END = new Date('2026-08-22');
+export const COMMUNITY_CUSTODY_START = new Date('2025-05-23'); // real (per Alex)
+
+// FIXME(alex): real community-custody END — required for accurate "I am here" marker.
+export const COMMUNITY_CUSTODY_END = new Date('2026-08-22'); // placeholder

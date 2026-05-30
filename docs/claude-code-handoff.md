@@ -1,5 +1,7 @@
 # Sentence Structure — Claude Code Handoff
 
+> **SUPERSEDED for engineering truth by `CLAUDE.md`.** This document is the original pre-build plan; where it disagrees with `CLAUDE.md` or the code, they win. The body below has been spot-patched for the most dangerous contradictions (versions, content-collections API, no adapter, six columns), but treat `CLAUDE.md` + the live source as authoritative. The build-order/phase history is retained as provenance.
+
 ## Purpose of this document
 
 You are Claude Code, working with Alex Fritz on a personal blog publication called Sentence Structure. This document is the engineering bridge between two design documents and the actual build. It commits the code-shaped artifacts (schemas, theme config, file structure, build order, dependencies) and flags the things most likely to go wrong during implementation.
@@ -21,29 +23,41 @@ Voice for the publication itself: darkly comedic, memoir-first, outsider-legible
 
 ## Project context (one paragraph)
 
-Sentence Structure is a personal blog about the prison experience with adjacent columns for personal writing and rehabilitative practice. Five columns: Memoir, Concrete Truths, Economics of, Off the Record, Protective Factors. The Memoir column has a chronological architecture (the spine) not shared by the other four. The publication's authority comes from lived experience; design should support reading and stay out of the way. Dark mode mandatory from day one.
+Sentence Structure is a personal blog about the prison experience with adjacent columns for personal writing and rehabilitative practice. Six columns: Memoir, Concrete Truths, Economics of, Hearsay, Off the Record, Protective Factors. The Memoir column has a chronological architecture (the spine) not shared by the other columns. The publication's authority comes from lived experience; design should support reading and stay out of the way. Dark mode mandatory from day one.
 
 ## Tech stack — versions and dependencies
 
 
 ```json
-// package.json dependencies
+// package.json dependencies — CORRECTED to the as-built versions.
+// (Original plan targeted Astro 5 / MDX 4 / Zod 3 / TS 5.6; the build
+//  moved to Astro 6 + the Content Layer API. CLAUDE.md is authoritative.)
 {
   "dependencies": {
-    "astro": "^5.0.0",
-    "@astrojs/mdx": "^4.0.0",
-    "tailwindcss": "^4.0.0",
-    "@fontsource-variable/newsreader": "^5.1.0",
-    "@fontsource-variable/ibm-plex-sans": "^5.1.0",
-    "@fontsource/ibm-plex-mono": "^5.1.0",
-    "zod": "^3.23.0"
+    "astro": "^6.3.1",
+    "@astrojs/mdx": "^5.0.0",
+    "tailwindcss": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "remark-breaks": "^4.0.0",
+    "@fontsource-variable/newsreader": "^5.2.0",
+    "@fontsource-variable/ibm-plex-sans": "^5.2.0",
+    "@fontsource/ibm-plex-mono": "^5.2.0",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.6.0",
+    "typescript": "^6.0.0",
+    "vite": "^7.3.2",
     "@types/node": "^22.0.0"
   }
 }
 ```
+
+Version notes (as-built):
+- **Zod is imported from `zod` directly**, not from `astro:content` (Astro 6 deprecated the re-export).
+- **`vite@^7.3.2` is pinned at the top level** to dedupe — without it `@tailwindcss/vite` pulls Vite 8 (Rolldown) and the build breaks.
+- **Tailwind v4 is wired via the `@tailwindcss/vite` plugin** under `vite.plugins`, not via a Cloudflare/Astro adapter.
+- **`remark-breaks`** renders single newlines as `<br>` (OTR poetry line breaks, stacked Protective Factors lists).
+- Node `>=22.12`.
 
 
 
@@ -146,9 +160,10 @@ Architectural note on routing: column landings are static-per-column files becau
 
 ## Content collections
 
+> **CORRECTED.** The live config is `src/content.config.ts` using the **Content Layer API** (`glob()` loaders), with `z` imported from `zod`. A shared `basePostFields` object (title, deck?, publishedDate, tags, `crisisResources`) is spread into each collection's schema function, where `image()` supplies an optional `heroImage`. Memoir additionally carries `phase`, `experienceDate`, and `hearsay` references; **hearsay** is its own sixth base collection. The `type: 'content'` code block below is the original pre-build plan, retained as provenance only — `src/content.config.ts` is authoritative.
 
 ```typescript
-// src/content/config.ts
+// src/content/config.ts  (ORIGINAL PLAN — live file is src/content.config.ts)
 import { defineCollection, z } from 'astro:content';
 
 const phaseEnum = z.enum([
@@ -543,7 +558,7 @@ The foundational doc commits this order. Encode it as phases:
 
 1. `npm create astro@latest sentence-structure`
 2. Install dependencies (see "Tech stack" above)
-3. Configure `astro.config.mjs` for MDX and Cloudflare Pages adapter
+3. Configure `astro.config.mjs` for MDX, the `@tailwindcss/vite` plugin, and `remark-breaks`. No Cloudflare/SSR adapter — `output: 'static'` is sufficient for SSG.
 4. Create file structure (above)
 5. Write `src/content/config.ts` with full Zod schemas
 6. Write `src/styles/global.css` with full `@theme` config

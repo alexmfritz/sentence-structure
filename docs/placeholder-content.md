@@ -1,5 +1,7 @@
 # Sentence Structure — Placeholder Content
 
+> **REFERENCE ONLY — non-functioning content.** The 16 pieces below are no longer part of the build. They were design-phase placeholders, since replaced by real work in `src/content/`. This document is retained solely for reference — voice and format examples, and density/treatment testing. Do not wire any of it into content collections.
+
 ## What this is
 
 Placeholder editorial content for design testing. Sixteen pieces across the five columns, frontmatter-formatted to match an Astro content collection schema. Voice is deliberately divergent from Alex's actual voice — a quieter, more observational placeholder narrator with a slow positive arc — so this content can be safely thrown away and replaced when real writing begins, without anyone confusing it for the publication's authentic voice.
