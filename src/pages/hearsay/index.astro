@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TopNav from '../../components/chrome/TopNav.astro';
 import NewsletterPrompt from '../../components/chrome/NewsletterPrompt.astro';
@@ -10,7 +9,6 @@ import { getCollection } from 'astro:content';
 import { COLUMNS } from '../../lib/columns';
 import { COLUMN_EMPTY_STATES } from '../../lib/column-landing';
 import { HEARSAY_SPARSE_THRESHOLD } from '../../lib/hearsay';
-import hearsayLandingHero from '../../assets/hearsay-landing-hero.png';
 
 const meta = COLUMNS['hearsay'];
 const empty = COLUMN_EMPTY_STATES['hearsay'];
@@ -29,39 +27,9 @@ const isSparse = posts.length < HEARSAY_SPARSE_THRESHOLD;
       manifesto={isSparse ? empty.manifesto : undefined}
     />
 
-    <figure class="hearsay-landing-hero">
-      <Image
-        src={hearsayLandingHero}
-        alt="Abstract collage of torn paper, paint splatters, and bright shards in yellow, blue, red, and gold."
-        class="hearsay-landing-hero__image"
-        widths={[600, 720, 1080, 1440]}
-        sizes="(min-width: 760px) 720px, 100vw"
-        format="webp"
-        loading="eager"
-      />
-    </figure>
-
     <HearsayFeed />
 
     {!isEmpty && <NewsletterPrompt />}
     {isEmpty && <ColumnSubscribePrompt column="hearsay" />}
   </div>
 </BaseLayout>
-
-<style>
-  .hearsay-landing-hero {
-    max-width: 720px;
-    margin: 2rem auto 0;
-    padding: 0 1.5rem;
-  }
-
-  .hearsay-landing-hero__image {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 2 / 1;
-    object-fit: cover;
-    border: 1px solid var(--color-hearsay-600);
-    border-radius: 2px;
-    display: block;
-  }
-</style>
