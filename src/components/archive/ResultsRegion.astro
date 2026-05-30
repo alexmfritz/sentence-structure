@@ -166,6 +166,13 @@ const initialVisible = Math.min(PAGE_SIZE, totalAcrossPages);
   .archive-tile[data-column='protective-factors']:hover .archive-tile__bg {
     background: color-mix(in oklch, var(--color-protective-factors-500) 36%, var(--color-bg-elevated));
   }
+  .archive-tile[data-column='hearsay'] .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-hearsay-500) 22%, var(--color-bg-elevated));
+    border: 1px solid var(--color-hearsay-600);
+  }
+  .archive-tile[data-column='hearsay']:hover .archive-tile__bg {
+    background: color-mix(in oklch, var(--color-hearsay-500) 36%, var(--color-bg-elevated));
+  }
 
   .archive-tile__bg {
     position: absolute;
@@ -230,6 +237,7 @@ const initialVisible = Math.min(PAGE_SIZE, totalAcrossPages);
   .archive-tile[data-column='economics-of'] .archive-tile__pill { color: var(--color-economics-of-100); border-color: var(--color-economics-of-500); }
   .archive-tile[data-column='off-the-record'] .archive-tile__pill { color: var(--color-off-the-record-100); border-color: var(--color-off-the-record-500); }
   .archive-tile[data-column='protective-factors'] .archive-tile__pill { color: var(--color-protective-factors-100); border-color: var(--color-protective-factors-500); }
+  .archive-tile[data-column='hearsay'] .archive-tile__pill { color: var(--color-hearsay-100); border-color: var(--color-hearsay-500); }
 
   .archive-tile__title {
     font-family: var(--font-serif);

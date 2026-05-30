@@ -35,12 +35,13 @@ function deckOrExcerpt(deck: string | undefined, body: string | undefined): stri
 }
 
 export async function getArchiveData(): Promise<ArchiveData> {
-  const [memoir, ct, eo, otr, pf] = await Promise.all([
+  const [memoir, ct, eo, otr, pf, hearsay] = await Promise.all([
     getCollection('memoir'),
     getCollection('concrete-truths'),
     getCollection('economics-of'),
     getCollection('off-the-record'),
     getCollection('protective-factors'),
+    getCollection('hearsay'),
   ]);
 
   const entries: ArchiveEntry[] = [];
@@ -119,6 +120,21 @@ export async function getArchiveData(): Promise<ArchiveData> {
       heroImage: post.data.heroImage,
       year: post.data.publishedDate.getFullYear(),
       url: `/protective-factors/${post.id}`,
+    });
+  }
+
+  for (const post of hearsay) {
+    entries.push({
+      collection: 'hearsay',
+      id: post.id,
+      title: post.data.title,
+      deck: post.data.deck,
+      publishedDate: post.data.publishedDate,
+      tags: post.data.tags,
+      excerpt: deckOrExcerpt(post.data.deck, post.body),
+      heroImage: post.data.heroImage,
+      year: post.data.publishedDate.getFullYear(),
+      url: `/hearsay/${post.id}`,
     });
   }
 

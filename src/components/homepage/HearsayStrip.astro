@@ -1,0 +1,158 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { extractFirstLine } from '../../lib/content';
+
+interface Props {
+  posts: CollectionEntry<'hearsay'>[];
+}
+
+const { posts } = Astro.props;
+
+const cards = posts.map((post) => ({
+  id: post.id,
+  label: post.data.title.trim() || extractFirstLine(post.body ?? ''),
+  untitled: !post.data.title.trim(),
+}));
+---
+
+<section class="hearsay-strip" data-column="hearsay" aria-labelledby="hearsay-strip-heading">
+  <div class="hearsay-strip__head">
+    <h2 id="hearsay-strip-heading" class="hearsay-strip__heading">Hearsay</h2>
+    <p class="hearsay-strip__tagline">Yes, this really happened.</p>
+  </div>
+
+  <ul class="hearsay-strip__track">
+    {
+      cards.map((card) => (
+        <li class="hearsay-strip__item">
+          <a class="hearsay-strip__card" href={`/hearsay/${card.id}`}>
+            <span class:list={['hearsay-strip__card-title', card.untitled && 'is-untitled']}>
+              {card.label}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+    <li class="hearsay-strip__item hearsay-strip__item--all">
+      <a class="hearsay-strip__view-all" href="/hearsay">View all &rarr;</a>
+    </li>
+  </ul>
+</section>
+
+<style>
+  .hearsay-strip {
+    max-width: 1100px;
+    margin: 3.5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .hearsay-strip__head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hearsay-strip__heading {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--column-200);
+    margin: 0;
+  }
+
+  .hearsay-strip__tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  /* Manual horizontal scroll — overflow-x:auto self-activates only when the
+     cards actually exceed the viewport width, so a handful of cards just sit
+     left-aligned (no empty scroll track). Deliberately NOT an auto-ticker. */
+  .hearsay-strip__track {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.75rem;
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .hearsay-strip__item {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .hearsay-strip__card {
+    display: flex;
+    align-items: flex-end;
+    width: 220px;
+    height: 120px;
+    padding: 1rem;
+    border: 1px solid var(--column-600);
+    border-radius: 4px;
+    background: color-mix(in oklch, var(--column-500) 18%, var(--color-bg-elevated));
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .hearsay-strip__card:hover {
+    background: color-mix(in oklch, var(--column-500) 32%, var(--color-bg-elevated));
+    border-color: var(--column-400);
+  }
+
+  .hearsay-strip__card-title {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 500;
+    color: var(--color-text);
+    /* Teaser surface: one line only. Full bodies live on the landing. */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hearsay-strip__card-title.is-untitled {
+    font-style: italic;
+    color: var(--color-text-secondary);
+  }
+
+  .hearsay-strip__item--all {
+    display: flex;
+  }
+
+  .hearsay-strip__view-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 120px;
+    border: 1px dashed var(--column-600);
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--column-200);
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .hearsay-strip__view-all:hover {
+    border-color: var(--column-400);
+    color: var(--column-100);
+  }
+
+  .hearsay-strip__card:focus-visible,
+  .hearsay-strip__view-all:focus-visible {
+    outline: 2px solid var(--column-300);
+    outline-offset: 2px;
+  }
+</style>

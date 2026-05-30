@@ -204,6 +204,11 @@ const { tags, years } = Astro.props;
     border-color: var(--color-protective-factors-400);
     color: var(--color-protective-factors-100);
   }
+  .pill--column[data-column='hearsay'][aria-pressed='true'] {
+    background: color-mix(in oklch, var(--color-hearsay-500) 30%, var(--color-bg-elevated));
+    border-color: var(--color-hearsay-400);
+    color: var(--color-hearsay-100);
+  }
 
   /* Phase pills tint to memoir coral when active (memoir-only). */
   .pill--phase[aria-pressed='true'] {

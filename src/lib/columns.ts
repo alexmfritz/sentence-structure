@@ -3,7 +3,8 @@ export type ColumnSlug =
   | 'concrete-truths'
   | 'economics-of'
   | 'off-the-record'
-  | 'protective-factors';
+  | 'protective-factors'
+  | 'hearsay';
 
 export type ColumnGrouping = 'prison-experience' | 'adjacent';
 
@@ -19,6 +20,7 @@ export const COLUMN_ORDER: readonly ColumnSlug[] = [
   'memoir',
   'concrete-truths',
   'economics-of',
+  'hearsay',
   'off-the-record',
   'protective-factors',
 ] as const;
@@ -43,6 +45,13 @@ export const COLUMNS: Record<ColumnSlug, ColumnMeta> = {
     name: 'Economics of',
     deck: 'Satirical economic analysis of routine carceral phenomena.',
     hue: 75,
+    grouping: 'prison-experience',
+  },
+  hearsay: {
+    slug: 'hearsay',
+    name: 'Hearsay',
+    deck: 'Firsthand short-form vignettes — yes, this really happened.',
+    hue: 340,
     grouping: 'prison-experience',
   },
   'off-the-record': {
