@@ -4,7 +4,7 @@ You are Claude Code, working with **Alex Fritz** on his personal blog publicatio
 
 ## What this is
 
-Personal blog about the prison experience. Five columns: Memoir, Concrete Truths, Economics of, Off the Record, Protective Factors. Voice for the publication is darkly comedic, memoir-first, outsider-legible. Tagline: "What They Don't Tell You." Build philosophy is **full design with empty states** — content fills in over time, the design ships complete from day one. Launch is not a priority; watching content fill the design is the motivation.
+Personal blog about the prison experience. Six columns: Memoir, Concrete Truths, Economics of, Hearsay, Off the Record, Protective Factors. Voice for the publication is darkly comedic, memoir-first, outsider-legible. Tagline: "What They Don't Tell You." Build philosophy is **full design with empty states** — content fills in over time, the design ships complete from day one. Launch is not a priority; watching content fill the design is the motivation.
 
 ## Working voice
 
@@ -51,7 +51,7 @@ Discovered during the build; respect going forward — each one breaks the build
 6. **The dev server serves stale renders after content-schema or image-pipeline changes.** Editing `content.config.ts` (e.g. adding a schema field) or adding images while `npm run dev` is running leaves stale output — wrong renders, or a `LocalImageUsedWrongly` error. Fix: stop the dev server, `rm -rf .astro node_modules/.astro`, restart. `npm run build` is always correct — trust it over the dev server when they disagree.
 7. **A `throw` inside a remark plugin does NOT fail the build.** Astro 6's glob content loader catches it, logs `[ERROR] [glob-loader] Error rendering …`, and the build still exits 0 — it even emits the page. Build-time content validation that must gate CI has to live where a throw propagates: `getStaticPaths`, or an integration hook. The Hearsay 250-word limit is enforced in `src/pages/hearsay/[slug].astro` getStaticPaths for exactly this reason — the remark plugin (`plugins/remark-hearsay-wordcount.mjs`) only counts and injects the word count; it does not gate.
 
-## Five columns + key constants
+## Six columns + key constants
 
 Phase enum (canonical order — DO NOT REORDER): `jail → shelton → coyote-ridge → monroe → community-custody`.
 
@@ -60,12 +60,13 @@ Phase enum (canonical order — DO NOT REORDER): `jail → shelton → coyote-ri
 | Memoir | `memoir` | 25 (coral) | prison-experience |
 | Concrete Truths | `concrete-truths` | 245 (blue) | prison-experience |
 | Economics of | `economics-of` | 75 (amber) | prison-experience |
+| Hearsay | `hearsay` | 340 (rose) | prison-experience |
 | Off the Record | `off-the-record` | 150 (sage) | adjacent |
 | Protective Factors | `protective-factors` | 195 (teal) | adjacent |
 
 **Structural purple/indigo (hue 280)** = the publication's editorial voice color. Used ONLY for homepage manifesto strip, post-page newsletter prompt, about-page reading progress bar. NEVER as a column accent. Column-specific empty states use the column's own accent, not structural purple. This split is the single most likely place for design drift — verify before applying any colored surface.
 
-The Memoir column is the only one with the chronological "spine" architecture, dual-date model (`experienceDate` + `publishedDate`), drop cap on first paragraph, and phase tag. The other four columns use only `publishedDate`.
+The Memoir column is the only one with the chronological "spine" architecture, dual-date model (`experienceDate` + `publishedDate`), drop cap on first paragraph, and phase tag. The other five columns use only `publishedDate`.
 
 ## Build commands
 
