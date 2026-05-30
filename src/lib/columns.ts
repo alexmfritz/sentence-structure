@@ -14,6 +14,9 @@ export interface ColumnMeta {
   deck: string;
   hue: number;
   grouping: ColumnGrouping;
+  // Optional standing epigraph, rendered in the column header's deck slot
+  // (replaces the plain deck for that column). Only Hearsay uses this.
+  epigraph?: { quote: string; attribution: string };
 }
 
 export const COLUMN_ORDER: readonly ColumnSlug[] = [
@@ -53,6 +56,12 @@ export const COLUMNS: Record<ColumnSlug, ColumnMeta> = {
     deck: 'Firsthand short-form vignettes — yes, this really happened.',
     hue: 340,
     grouping: 'prison-experience',
+    // Persistent epigraph — the ironic thesis of the column. Renders in the
+    // header deck slot at every post count; replaces the plain deck above.
+    epigraph: {
+      quote: "Prison is an experience you can't get anywhere else.",
+      attribution: 'a cellmate at Coyote Ridge, quoting his father',
+    },
   },
   'off-the-record': {
     slug: 'off-the-record',

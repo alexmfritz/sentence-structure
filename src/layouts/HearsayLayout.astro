@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import TopNav from '../components/chrome/TopNav.astro';
 import { COLUMNS } from '../lib/columns';
@@ -11,6 +13,7 @@ interface Props {
   publishedDate: Date;
   tags: string[];
   body?: string;
+  heroImage?: ImageMetadata;
   fullStoryUrl?: string;
   fullStoryTitle?: string;
 }
@@ -22,6 +25,7 @@ const {
   publishedDate,
   tags,
   body,
+  heroImage,
   fullStoryUrl,
   fullStoryTitle,
 } = Astro.props;
@@ -59,6 +63,22 @@ const dateLabel = new Intl.DateTimeFormat('en-US', {
           <time datetime={publishedDate.toISOString()}>{dateLabel}</time>
         </p>
       </header>
+
+      {
+        heroImage && (
+          <figure class="vignette__hero">
+            <Image
+              src={heroImage}
+              alt=""
+              class="vignette__hero-image"
+              widths={[480, 640, 960]}
+              sizes="(min-width: 680px) 640px, 100vw"
+              format="webp"
+              loading="eager"
+            />
+          </figure>
+        )
+      }
 
       <div class="vignette__body" data-column="hearsay">
         <slot />
@@ -100,6 +120,35 @@ const dateLabel = new Intl.DateTimeFormat('en-US', {
 
   .vignette__head {
     margin-bottom: 1.5rem;
+  }
+
+  /* Optional post hero — vignettes are text-first, but a piece can carry
+     one. Breaks out slightly past the 480px body for editorial weight. */
+  .vignette__hero {
+    margin: 0 0 2rem;
+  }
+
+  .vignette__hero-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: 1px solid var(--column-600);
+    border-radius: 2px;
+    display: block;
+  }
+
+  /* Symmetric breakout past the padded 480px body. margin-left:50% +
+     translateX(-50%) centers regardless of the body's padding, avoiding the
+     off-center shift that hand-tuned negative margins produce here (the
+     .vignette wrapper carries padding, unlike PostLayout's bare body). */
+  @media (min-width: 680px) {
+    .vignette__hero {
+      width: 600px;
+      max-width: none;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
   }
 
   .vignette__pill {

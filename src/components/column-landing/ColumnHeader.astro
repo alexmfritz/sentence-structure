@@ -14,7 +14,20 @@ const meta = COLUMNS[column];
   <div class="column-header__inner">
     <p class="column-header__eyebrow">Column</p>
     <h1 class="column-header__title">{meta.name}</h1>
-    <p class="column-header__deck">{meta.deck}</p>
+    {
+      meta.epigraph ? (
+        <figure class="column-header__epigraph">
+          <blockquote class="column-header__epigraph-quote">
+            {meta.epigraph.quote}
+          </blockquote>
+          <figcaption class="column-header__epigraph-attribution">
+            — {meta.epigraph.attribution}
+          </figcaption>
+        </figure>
+      ) : (
+        meta.deck && <p class="column-header__deck">{meta.deck}</p>
+      )
+    }
     {manifesto && <p class="column-header__manifesto">{manifesto}</p>}
     <slot name="below-deck" />
   </div>
@@ -72,6 +85,33 @@ const meta = COLUMNS[column];
     color: var(--color-text-secondary);
     margin: 0;
     max-width: 38ch;
+  }
+
+  /* Standing epigraph — block-quote semantics (the words are someone
+     else's), so it uses text color, NOT the column accent. Italic carries
+     it. Sits in the deck slot; matches text-deck / text-meta sizing. */
+  .column-header__epigraph {
+    margin: 0;
+    max-width: 42ch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .column-header__epigraph-quote {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .column-header__epigraph-attribution {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--color-text-tertiary);
   }
 
   .column-header__manifesto {

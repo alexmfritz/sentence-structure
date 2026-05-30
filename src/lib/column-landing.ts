@@ -147,8 +147,12 @@ export const COLUMN_EMPTY_STATES: Record<ColumnSlug, EmptyStateCopy> = {
     ],
   },
   hearsay: {
+    // DRAFT voice copy — Alex to rewrite in his own voice. Tells the
+    // spawn-story behind the epigraph (the "Dravis" origin) and the column's
+    // premise; intentionally omits the heavier Memoir material. Placement is
+    // final; the prose is not.
     manifesto:
-      'Firsthand short-form vignettes — the punchy, self-contained "yes, this really happened." The deliberately unrigorous shadow of Concrete Truths: one column is sourced and cited, this one is trust me, I was there. Every piece runs 250 words or less.',
+      "A man I'll call Dravis — a cellmate at Coyote Ridge, raised by a father who had done his own time — once handed me his father's one piece of advice, offered as if it were preparation: prison is an experience you can't get anywhere else. This is the column for the moments that prove him right. The things you'd swear were invented if you hadn't been standing there.",
     placeholders: [
       { eyebrow: 'Forthcoming', title: '[ ~200 words / a thing that happened on the unit / no footnotes ]' },
     ],
