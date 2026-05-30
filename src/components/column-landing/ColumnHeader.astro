@@ -17,9 +17,7 @@ const meta = COLUMNS[column];
     {
       meta.epigraph ? (
         <figure class="column-header__epigraph">
-          <blockquote class="column-header__epigraph-quote">
-            {meta.epigraph.quote}
-          </blockquote>
+          <blockquote class="column-header__epigraph-quote">&quot;{meta.epigraph.quote}&quot;</blockquote>
           <figcaption class="column-header__epigraph-attribution">
             — {meta.epigraph.attribution}
           </figcaption>

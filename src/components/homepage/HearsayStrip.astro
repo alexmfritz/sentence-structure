@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { extractFirstLine } from '../../lib/content';
+import hearsayCover from '../../assets/hearsay-landing-hero.png';
 
 interface Props {
   posts: CollectionEntry<'hearsay'>[];
@@ -34,7 +36,21 @@ const cards = posts.map((post) => ({
       ))
     }
     <li class="hearsay-strip__item hearsay-strip__item--all">
-      <a class="hearsay-strip__view-all" href="/hearsay">View all &rarr;</a>
+      <a class="hearsay-strip__view-all" href="/hearsay">
+        <Image
+          src={hearsayCover}
+          alt=""
+          class="hearsay-strip__view-all-bg"
+          widths={[240, 440]}
+          sizes="220px"
+          format="webp"
+        />
+        <span class="hearsay-strip__view-all-scrim" aria-hidden="true"></span>
+        <span class="hearsay-strip__view-all-content">
+          <span class="hearsay-strip__view-all-label">Hearsay</span>
+          <span class="hearsay-strip__view-all-cta">View all &rarr;</span>
+        </span>
+      </a>
     </li>
   </ul>
 </section>
@@ -129,24 +145,63 @@ const cards = posts.map((post) => ({
     display: flex;
   }
 
+  /* Column-cover terminal card: the column's representative art behind a
+     strong scrim (the image is bright/busy) with a bottom-anchored label. */
   .hearsay-strip__view-all {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 140px;
+    position: relative;
+    display: block;
+    width: 220px;
     height: 120px;
-    border: 1px dashed var(--column-600);
+    border: 1px solid var(--column-600);
     border-radius: 4px;
-    font-family: var(--font-sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--column-200);
+    overflow: hidden;
     text-decoration: none;
-    transition: border-color 0.2s ease, color 0.2s ease;
   }
 
-  .hearsay-strip__view-all:hover {
-    border-color: var(--column-400);
+  .hearsay-strip__view-all-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hearsay-strip__view-all-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      oklch(0.12 0.02 340 / 0.45) 0%,
+      oklch(0.12 0.02 340 / 0.6) 55%,
+      oklch(0.1 0.02 340 / 0.88) 100%
+    );
+    transition: opacity 0.2s ease;
+  }
+
+  .hearsay-strip__view-all:hover .hearsay-strip__view-all-scrim {
+    opacity: 0.82;
+  }
+
+  .hearsay-strip__view-all-content {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .hearsay-strip__view-all-label {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .hearsay-strip__view-all-cta {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
     color: var(--column-100);
   }
 

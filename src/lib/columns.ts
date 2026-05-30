@@ -60,7 +60,7 @@ export const COLUMNS: Record<ColumnSlug, ColumnMeta> = {
     // header deck slot at every post count; replaces the plain deck above.
     epigraph: {
       quote: "Prison is an experience you can't get anywhere else.",
-      attribution: 'a cellmate at Coyote Ridge, quoting his father',
+      attribution: 'a cellmate, quoting his father',
     },
   },
   'off-the-record': {
