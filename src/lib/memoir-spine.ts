@@ -59,5 +59,7 @@ export function groupByPhase(posts: MemoirEntry[]): Record<Phase, MemoirEntry[]>
 
 export const COMMUNITY_CUSTODY_START = new Date('2025-05-23'); // real (per Alex)
 
-// FIXME(alex): real community-custody END — required for accurate "I am here" marker.
-export const COMMUNITY_CUSTODY_END = new Date('2026-08-22'); // placeholder
+// FIXME(alex): exact community-custody END still TBD. Alex estimates spring
+// 2027; this is a refined placeholder, not the real date. The "I am here"
+// marker position stays an estimate until the precise date lands.
+export const COMMUNITY_CUSTODY_END = new Date('2027-04-01'); // estimate (~spring 2027)

@@ -122,7 +122,7 @@ These were intentionally not built. Each has a stated trigger; if a future sessi
 - **Manifesto-bio essay** at `src/pages/about.mdx` — ✅ drafted (`lastUpdated: 2026-05-11`); no placeholder blocks remain. Refine on revision.
 - **Real generative-portrait imagery** — in progress. Real heroes/inline images exist in `src/assets/` (about, columns, per-piece); remaining placeholder gradients fill in as pieces publish.
 - **Real planned-piece descriptions** in `COLUMN_EMPTY_STATES` (`src/lib/column-landing.ts`) — currently generic-thematic.
-- **Real `COMMUNITY_CUSTODY_END`** date in `src/lib/memoir-spine.ts` — the one real-content date Alex still owes. `COMMUNITY_CUSTODY_START` is now `2025-05-23` (real); `END` remains placeholder `2026-08-22` (FIXME in code). The "I am here" position is computed from both, so the marker stays approximate until END lands.
+- **Real `COMMUNITY_CUSTODY_END`** date in `src/lib/memoir-spine.ts` — the one real-content date Alex still owes. `COMMUNITY_CUSTODY_START` is now `2025-05-23` (real); `END` is a refined estimate `2027-04-01` (~spring 2027 per Alex), exact date still TBD (FIXME in code). The "I am here" position is computed from both, so the marker stays approximate until the precise END lands.
 - **Newsletter form handler** — currently `<form onsubmit="return false">`. Wire to Formspree or similar.
 - **`/rss.xml` route** — Footer links to it but the route doesn't exist.
 
