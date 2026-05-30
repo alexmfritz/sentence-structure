@@ -5,6 +5,7 @@ import BaseLayout from './BaseLayout.astro';
 import TopNav from '../components/chrome/TopNav.astro';
 import { COLUMNS } from '../lib/columns';
 import { makeExcerpt } from '../lib/content';
+import CrisisResources from '../components/post/CrisisResources.astro';
 
 interface Props {
   title: string;
@@ -16,6 +17,7 @@ interface Props {
   heroImage?: ImageMetadata;
   fullStoryUrl?: string;
   fullStoryTitle?: string;
+  crisisResources?: boolean;
 }
 
 const {
@@ -28,6 +30,7 @@ const {
   heroImage,
   fullStoryUrl,
   fullStoryTitle,
+  crisisResources,
 } = Astro.props;
 
 const meta = COLUMNS['hearsay'];
@@ -83,6 +86,8 @@ const dateLabel = new Intl.DateTimeFormat('en-US', {
       <div class="vignette__body" data-column="hearsay">
         <slot />
       </div>
+
+      {crisisResources && <CrisisResources />}
 
       {
         fullStoryUrl && (

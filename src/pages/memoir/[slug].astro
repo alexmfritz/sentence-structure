@@ -2,12 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
-import PullQuote from '../../components/post/PullQuote.astro';
-import Sidenote from '../../components/post/Sidenote.astro';
-import Stat from '../../components/post/Stat.astro';
-import BlockQuote from '../../components/post/BlockQuote.astro';
-import Figure from '../../components/post/Figure.astro';
 import { readingTimeMinutes } from '../../lib/reading-time';
+import { mdxComponents } from '../../lib/mdx-components';
 
 export async function getStaticPaths() {
   const posts = await getCollection('memoir');
@@ -36,6 +32,7 @@ const readingMinutes = readingTimeMinutes(post.body ?? '');
   tags={post.data.tags}
   body={post.body}
   heroImage={post.data.heroImage}
+  crisisResources={post.data.crisisResources}
 >
-  <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+  <Content components={mdxComponents} />
 </PostLayout>

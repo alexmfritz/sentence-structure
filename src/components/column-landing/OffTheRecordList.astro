@@ -1,11 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
-import PullQuote from '../post/PullQuote.astro';
-import Sidenote from '../post/Sidenote.astro';
-import Stat from '../post/Stat.astro';
-import BlockQuote from '../post/BlockQuote.astro';
-import Figure from '../post/Figure.astro';
 import { extractFirstLine } from '../../lib/content';
+import { mdxComponents } from '../../lib/mdx-components';
 
 const posts = (await getCollection('off-the-record')).sort(
   (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime(),
@@ -87,7 +83,7 @@ const dateLabel = (d: Date) =>
         )}
 
         <div class="otr-entry__body">
-          <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+          <Content components={mdxComponents} />
         </div>
 
         {i < rendered.length - 1 && (

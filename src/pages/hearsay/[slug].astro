@@ -2,12 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import HearsayLayout from '../../layouts/HearsayLayout.astro';
-import PullQuote from '../../components/post/PullQuote.astro';
-import Sidenote from '../../components/post/Sidenote.astro';
-import Stat from '../../components/post/Stat.astro';
-import BlockQuote from '../../components/post/BlockQuote.astro';
-import Figure from '../../components/post/Figure.astro';
 import { extractFirstLine } from '../../lib/content';
+import { mdxComponents } from '../../lib/mdx-components';
 import { getFullStoryFor, HEARSAY_WORD_LIMIT } from '../../lib/hearsay';
 
 export async function getStaticPaths() {
@@ -56,6 +52,7 @@ const fullStory = await getFullStoryFor(post.id);
   heroImage={post.data.heroImage}
   fullStoryUrl={fullStory ? `/memoir/${fullStory.id}` : undefined}
   fullStoryTitle={fullStory?.data.title}
+  crisisResources={post.data.crisisResources}
 >
-  <Content components={{ PullQuote, Sidenote, Stat, BlockQuote, Figure }} />
+  <Content components={mdxComponents} />
 </HearsayLayout>

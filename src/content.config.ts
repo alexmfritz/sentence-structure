@@ -18,6 +18,11 @@ const basePostFields = {
   deck: z.string().optional(),
   publishedDate: z.coerce.date(),
   tags: z.array(z.string()).default([]),
+  // Opt-in standing crisis-support block at the foot of the article.
+  // Default false; only pieces that touch suicidality / self-harm material
+  // set true. Rendered by PostLayout + HearsayLayout (single source —
+  // copy lives in CrisisResources.astro, never per-file).
+  crisisResources: z.boolean().default(false),
 };
 
 const memoir = defineCollection({

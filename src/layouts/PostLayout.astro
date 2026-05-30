@@ -10,6 +10,7 @@ import BylineStrip from '../components/post/BylineStrip.astro';
 import { COLUMNS, type ColumnSlug } from '../lib/columns';
 import type { Phase } from '../content.config';
 import { makeExcerpt } from '../lib/content';
+import CrisisResources from '../components/post/CrisisResources.astro';
 
 interface Props {
   column: ColumnSlug;
@@ -22,6 +23,7 @@ interface Props {
   tags: string[];
   body?: string;
   heroImage?: ImageMetadata;
+  crisisResources?: boolean;
 }
 
 const {
@@ -35,6 +37,7 @@ const {
   tags,
   body,
   heroImage,
+  crisisResources,
 } = Astro.props;
 
 const meta = COLUMNS[column];
@@ -102,6 +105,8 @@ const isOffTheRecord = column === 'off-the-record';
       >
         <slot />
       </div>
+
+      {crisisResources && <CrisisResources />}
 
       {
         tags.length > 0 && (
