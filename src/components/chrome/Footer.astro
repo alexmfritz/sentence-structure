@@ -1,5 +1,5 @@
 ---
-import { COLUMNS_LIST } from '../../lib/columns';
+import { COLUMNS_ALPHABETICAL } from '../../lib/columns';
 
 const year = new Date().getFullYear();
 ---
@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
       <h3 class="site-footer__heading">Columns</h3>
       <ul>
         {
-          COLUMNS_LIST.map((column) => (
+          COLUMNS_ALPHABETICAL.map((column) => (
             <li>
               <a href={`/${column.slug}`}>{column.name}</a>
             </li>
@@ -22,8 +22,8 @@ const year = new Date().getFullYear();
     <section class="site-footer__group">
       <h3 class="site-footer__heading">Read</h3>
       <ul>
-        <li><a href="/archive">Archive</a></li>
         <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
         <li><a href="/rss.xml">RSS</a></li>
       </ul>
     </section>
