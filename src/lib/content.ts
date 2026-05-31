@@ -5,6 +5,7 @@ export function extractFirstLine(body: string): string {
     if (line.startsWith('---')) continue;
     if (line.startsWith('#')) continue;
     if (line.startsWith('<')) continue;
+    if (/^(?:import|export)\b/.test(line)) continue; // MDX import/export lines
     return line;
   }
   return '';
@@ -19,6 +20,11 @@ const EXCERPT_LENGTH = 140;
 export function makeExcerpt(source: string | undefined): string {
   if (!source) return '';
   const cleaned = source
+    // Drop MDX import/export statements — otherwise a deckless .mdx post
+    // (e.g. the Off the Record poems) leaks its `import { Image } …` lines
+    // into the archive tile excerpt.
+    .replace(/^[ \t]*(?:import|export)\b.*$/gm, ' ')
+    // Drop JSX/HTML tags, including multi-line component tags like <Image … />.
     .replace(/<[^>]*>/g, ' ')
     .replace(/[#*_`>~\-]/g, ' ')
     .replace(/\s+/g, ' ')
