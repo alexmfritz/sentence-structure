@@ -348,7 +348,11 @@ const isCurrent = (href: string) => current === href.replace(/\/+$/, '');
 
   .menu-wheel__util a {
     display: inline-block;
+    /* Equal-width Pages pills, a step up from natural label width but kept
+       below the 168px column pills so the column axis stays primary. */
+    min-width: 144px;
     padding: 0.5rem 1rem;
+    text-align: center;
     font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 500;
