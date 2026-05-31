@@ -1,5 +1,8 @@
 ---
 import { COLUMNS_LIST } from '../../lib/columns';
+
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isColumnCurrent = (slug: string) => current === `/${slug}`;
 ---
 
 <div class="hamburger" data-hamburger>
@@ -28,7 +31,12 @@ import { COLUMNS_LIST } from '../../lib/columns';
         {
           COLUMNS_LIST.map((c) => (
             <li data-column={c.slug}>
-              <a href={`/${c.slug}`}>{c.name}</a>
+              <a
+                href={`/${c.slug}`}
+                aria-current={isColumnCurrent(c.slug) ? 'page' : undefined}
+              >
+                {c.name}
+              </a>
             </li>
           ))
         }
@@ -175,6 +183,26 @@ import { COLUMNS_LIST } from '../../lib/columns';
   .hamburger__nav li[data-column='off-the-record'] a:hover  { border-bottom-color: var(--color-off-the-record-400); }
   .hamburger__nav li[data-column='protective-factors'] a:hover { border-bottom-color: var(--color-protective-factors-400); }
   .hamburger__nav li[data-column='hearsay'] a:hover { border-bottom-color: var(--color-hearsay-400); }
+
+  /* Column links get solid column fills (the nav reads as a color legend);
+     the "Read" group (Archive, About) has no data-column and stays neutral.
+     Vars come from the global [data-column] block. */
+  .hamburger__nav li[data-column] a {
+    background: var(--column-600);
+    color: var(--column-200);
+    transition: background-color 120ms ease, color 120ms ease;
+  }
+
+  .hamburger__nav li[data-column] a:hover,
+  .hamburger__nav li[data-column] a[aria-current='page'] {
+    background: var(--column-500);
+    color: var(--column-100);
+  }
+
+  .hamburger__nav li[data-column] a:focus-visible {
+    outline: 2px solid var(--column-300);
+    outline-offset: 2px;
+  }
 
   /* prefers-reduced-transparency handled globally in global.css. */
 

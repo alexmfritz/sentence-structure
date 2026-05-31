@@ -1,5 +1,11 @@
 ---
 import { COLUMNS_LIST } from '../../lib/columns';
+
+// Mark the current column's pill via aria-current on its exact landing page.
+// Post pages (/memoir/slug) are not the column landing, so no pill is "page"
+// there — semantically correct, and the resting tint still reads as a legend.
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isColumnCurrent = (slug: string) => current === `/${slug}`;
 ---
 
 <header class="top-nav">
@@ -13,7 +19,11 @@ import { COLUMNS_LIST } from '../../lib/columns';
           {
             COLUMNS_LIST.map((column) => (
               <li>
-                <a href={`/${column.slug}`} style={`--column-300: var(--color-${column.slug}-300)`}>
+                <a
+                  href={`/${column.slug}`}
+                  data-column={column.slug}
+                  aria-current={isColumnCurrent(column.slug) ? 'page' : undefined}
+                >
                   {column.name}
                 </a>
               </li>
@@ -45,13 +55,21 @@ import { COLUMNS_LIST } from '../../lib/columns';
     padding: 1rem 1.5rem;
   }
 
+  /* Wordmark = publication, not a column → structural voice color (ties it
+     to the manifesto strip + newsletter). Color only; geometry unchanged. */
   .top-nav__wordmark {
     font-family: var(--font-serif);
     font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: var(--color-text);
+    color: var(--color-structural-100);
+    background: var(--color-structural-600);
     text-decoration: none;
+    transition: background-color 120ms ease, color 120ms ease;
+  }
+
+  .top-nav__wordmark:hover {
+    background: var(--color-structural-500);
   }
 
   .top-nav__links {
@@ -102,17 +120,29 @@ import { COLUMNS_LIST } from '../../lib/columns';
     z-index: 50;
   }
 
+  /* Column pills consume the generic --column-* vars supplied by the global
+     [data-column] block — same mechanism the Hearsay components use. No
+     hardcoded color here; geometry (padding, left rule) is unchanged. */
   .top-nav__columns-list a {
     display: block;
     padding: 0.5rem 1rem;
-    color: var(--color-text-secondary);
     text-decoration: none;
     border-left: 2px solid transparent;
+    background: var(--column-600);
+    color: var(--column-200);
+    transition: background-color 120ms ease, color 120ms ease;
   }
 
-  .top-nav__columns-list a:hover {
-    color: var(--color-text);
+  .top-nav__columns-list a:hover,
+  .top-nav__columns-list a[aria-current='page'] {
+    background: var(--column-500);
+    color: var(--column-100);
     border-left-color: var(--column-300);
+  }
+
+  .top-nav__columns-list a:focus-visible {
+    outline: 2px solid var(--column-300);
+    outline-offset: 2px;
   }
 
   @media (max-width: 640px) {
