@@ -1,24 +1,24 @@
 ---
-import { COLUMNS_LIST } from '../../lib/columns';
+import { COLUMNS_ALPHABETICAL } from '../../lib/columns';
 
-interface Item {
-  label: string;
-  href: string;
-  column?: string;
-}
+// Two axes, two categories. Columns are content → the colored down-left
+// cascade (the color legend). Pages (Archive, About) are utility nav → a
+// separate neutral horizontal pair, level with the trigger, the way the
+// wordmark pill sits. This mirrors the split the mobile HamburgerMenu already
+// makes (its "Columns" vs "Read" groups); the wheel was the odd one out.
+const columnItems = COLUMNS_ALPHABETICAL.map((c) => ({
+  label: c.name,
+  href: `/${c.slug}`,
+  column: c.slug,
+}));
 
-const items: Item[] = [
-  ...COLUMNS_LIST.map((c) => ({
-    label: c.name,
-    href: `/${c.slug}`,
-    column: c.slug,
-  })),
-  { label: 'Archive', href: '/archive' },
+const utilityItems = [
   { label: 'About', href: '/about' },
+  { label: 'Archive', href: '/archive' },
 ];
 
 const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
+const isCurrent = (href: string) => current === href.replace(/\/+$/, '');
 ---
 
 <nav class="menu-wheel" aria-label="Site navigation" data-menu-wheel>
@@ -26,7 +26,8 @@ const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
     class="menu-wheel__trigger"
     type="button"
     aria-expanded="false"
-    aria-controls="menu-wheel-items"
+    aria-controls="menu-wheel-items menu-wheel-utils"
+    aria-haspopup="menu"
     aria-label="Open menu"
   >
     <span class="menu-wheel__trigger-bar"></span>
@@ -38,20 +39,44 @@ const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
     id="menu-wheel-items"
     class="menu-wheel__items"
     role="menu"
+    aria-label="Columns"
     data-open="false"
   >
     {
-      items.map((item, i) => (
+      columnItems.map((item, i) => (
         <li
           class="menu-wheel__item"
-          style={`--i: ${i}; --total: ${items.length};`}
+          style={`--i: ${i}; --total: ${columnItems.length};`}
           data-column={item.column}
         >
           <a
             href={item.href}
             role="menuitem"
             tabindex="-1"
-            aria-current={isColumnCurrent(item.column) ? 'page' : undefined}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ul
+    id="menu-wheel-utils"
+    class="menu-wheel__utils"
+    role="menu"
+    aria-label="Pages"
+    data-open="false"
+  >
+    {
+      utilityItems.map((item, j) => (
+        <li class="menu-wheel__util" style={`--j: ${j};`}>
+          <a
+            href={item.href}
+            role="menuitem"
+            tabindex="-1"
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
           >
             {item.label}
           </a>
@@ -67,22 +92,25 @@ const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
   const wheels = document.querySelectorAll<WheelEl>('[data-menu-wheel]');
   wheels.forEach((wheel) => {
     const trigger = wheel.querySelector<HTMLButtonElement>('.menu-wheel__trigger');
-    const itemsList = wheel.querySelector<HTMLElement>('.menu-wheel__items');
-    const links = wheel.querySelectorAll<HTMLAnchorElement>(
-      '.menu-wheel__item a',
-    );
-    if (!trigger || !itemsList) return;
+    // Both axes toggle together; keyboard traverses all items in DOM order
+    // (columns first, then pages) so open-focus lands on the first column.
+    const lists = wheel.querySelectorAll<HTMLElement>('[data-open]');
+    const links = wheel.querySelectorAll<HTMLAnchorElement>('a[role="menuitem"]');
+    if (!trigger || !lists.length) return;
 
     const setOpen = (open: boolean) => {
       trigger.setAttribute('aria-expanded', String(open));
-      itemsList.dataset.open = String(open);
+      lists.forEach((l) => {
+        l.dataset.open = String(open);
+      });
       links.forEach((a) => {
         a.tabIndex = open ? 0 : -1;
       });
       trigger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     };
 
-    const isOpen = () => itemsList.dataset.open === 'true';
+    const isOpen = () =>
+      Array.from(lists).some((l) => l.dataset.open === 'true');
 
     trigger.addEventListener('click', () => {
       const willOpen = !isOpen();
@@ -131,7 +159,10 @@ const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
 <style>
   .menu-wheel {
     position: absolute;
-    top: 1.25rem;
+    /* Center the 48px trigger (and the Pages pills, which share its band) on
+       the same line as the home-header wordmark pill, whose center sits ~34px
+       from the top → trigger top = 34 - 24. */
+    top: 10px;
     right: 1.25rem;
     z-index: 20;
   }
@@ -262,8 +293,8 @@ const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
   }
 
   /* Column items get solid column fills (the nav becomes a color legend);
-     Archive/About keep the glass-pill treatment above. Vars come from the
-     global [data-column] block. Solid fill → prefers-reduced-transparency
+     the Pages axis stays neutral glass. Vars come from the global
+     [data-column] block. Solid fill → prefers-reduced-transparency
      unaffected. */
   .menu-wheel__item[data-column] a {
     background: var(--column-600);
@@ -281,10 +312,79 @@ const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
     outline-offset: 2px;
   }
 
-  /* prefers-reduced-motion: keep the wedge layout but skip the animation. */
+  /* Pages axis. A neutral horizontal pair that extends left from the trigger
+     at the trigger's own height — the same band the wordmark pill sits in.
+     Deliberately NOT colored: these are utility nav, not columns, and keeping
+     them off the cascade is the whole point. Flex handles the variable pill
+     widths; the slide-in is decoupled from layout so labels can be any size. */
+  .menu-wheel__utils {
+    position: absolute;
+    top: 0;
+    right: 60px; /* trigger (48px) at right:0 + 12px gap */
+    height: 48px; /* match trigger → vertically centered on it */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .menu-wheel__utils[data-open='true'] {
+    pointer-events: auto;
+  }
+
+  .menu-wheel__util {
+    transform: translateX(14px) scale(0.92);
+    opacity: 0;
+    transition:
+      transform 0.3s cubic-bezier(0.18, 0.74, 0.28, 1),
+      opacity 0.22s ease;
+  }
+
+  .menu-wheel__utils[data-open='true'] .menu-wheel__util {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    transition-delay: calc(var(--j) * 40ms);
+  }
+
+  .menu-wheel__util a {
+    display: inline-block;
+    /* Equal-width Pages pills, a step up from natural label width but kept
+       below the 168px column pills so the column axis stays primary. */
+    min-width: 144px;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    background: var(--glass-pill);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .menu-wheel__util a:hover,
+  .menu-wheel__util a[aria-current='page'] {
+    background: var(--glass-pill-hover);
+  }
+
+  .menu-wheel__util a:focus-visible {
+    outline: 2px solid var(--color-structural-300);
+    outline-offset: 2px;
+  }
+
+  /* prefers-reduced-motion: keep both layouts but skip the animation. */
   @media (prefers-reduced-motion: reduce) {
     .menu-wheel__item,
-    .menu-wheel__items[data-open='true'] .menu-wheel__item {
+    .menu-wheel__items[data-open='true'] .menu-wheel__item,
+    .menu-wheel__util,
+    .menu-wheel__utils[data-open='true'] .menu-wheel__util {
       transition: none;
       transition-delay: 0s;
     }

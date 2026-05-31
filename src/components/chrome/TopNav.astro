@@ -1,5 +1,5 @@
 ---
-import { COLUMNS_LIST } from '../../lib/columns';
+import { COLUMNS_ALPHABETICAL } from '../../lib/columns';
 
 // Mark the current column's pill via aria-current on its exact landing page.
 // Post pages (/memoir/slug) are not the column landing, so no pill is "page"
@@ -13,11 +13,13 @@ const isColumnCurrent = (slug: string) => current === `/${slug}`;
     <a href="/" class="top-nav__wordmark">Sentence Structure</a>
 
     <nav class="top-nav__links" aria-label="Primary">
+      <a href="/about">About</a>
+      <a href="/archive">Archive</a>
       <details class="top-nav__columns">
         <summary>Columns</summary>
         <ul class="top-nav__columns-list">
           {
-            COLUMNS_LIST.map((column) => (
+            COLUMNS_ALPHABETICAL.map((column) => (
               <li>
                 <a
                   href={`/${column.slug}`}
@@ -31,8 +33,6 @@ const isColumnCurrent = (slug: string) => current === `/${slug}`;
           }
         </ul>
       </details>
-      <a href="/archive">Archive</a>
-      <a href="/about">About</a>
       <a href="#newsletter">Newsletter</a>
     </nav>
   </div>
@@ -55,21 +55,13 @@ const isColumnCurrent = (slug: string) => current === `/${slug}`;
     padding: 1rem 1.5rem;
   }
 
-  /* Wordmark = publication, not a column → structural voice color (ties it
-     to the manifesto strip + newsletter). Color only; geometry unchanged. */
   .top-nav__wordmark {
     font-family: var(--font-serif);
     font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: var(--color-structural-100);
-    background: var(--color-structural-600);
+    color: var(--color-text);
     text-decoration: none;
-    transition: background-color 120ms ease, color 120ms ease;
-  }
-
-  .top-nav__wordmark:hover {
-    background: var(--color-structural-500);
   }
 
   .top-nav__links {

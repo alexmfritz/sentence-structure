@@ -1,5 +1,5 @@
 ---
-import { COLUMNS_LIST } from '../../lib/columns';
+import { COLUMNS_ALPHABETICAL } from '../../lib/columns';
 
 const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isColumnCurrent = (slug: string) => current === `/${slug}`;
@@ -29,7 +29,7 @@ const isColumnCurrent = (slug: string) => current === `/${slug}`;
       <p class="hamburger__group-label">Columns</p>
       <ul>
         {
-          COLUMNS_LIST.map((c) => (
+          COLUMNS_ALPHABETICAL.map((c) => (
             <li data-column={c.slug}>
               <a
                 href={`/${c.slug}`}
@@ -44,8 +44,8 @@ const isColumnCurrent = (slug: string) => current === `/${slug}`;
 
       <p class="hamburger__group-label">Read</p>
       <ul>
-        <li><a href="/archive">Archive</a></li>
         <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
       </ul>
     </nav>
   </div>
