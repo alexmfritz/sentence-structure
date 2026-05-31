@@ -159,7 +159,10 @@ const isCurrent = (href: string) => current === href.replace(/\/+$/, '');
 <style>
   .menu-wheel {
     position: absolute;
-    top: 1.25rem;
+    /* Center the 48px trigger (and the Pages pills, which share its band) on
+       the same line as the home-header wordmark pill, whose center sits ~34px
+       from the top → trigger top = 34 - 24. */
+    top: 10px;
     right: 1.25rem;
     z-index: 20;
   }
