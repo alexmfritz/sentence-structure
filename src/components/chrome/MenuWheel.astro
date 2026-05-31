@@ -16,6 +16,9 @@ const items: Item[] = [
   { label: 'Archive', href: '/archive' },
   { label: 'About', href: '/about' },
 ];
+
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isColumnCurrent = (slug?: string) => !!slug && current === `/${slug}`;
 ---
 
 <nav class="menu-wheel" aria-label="Site navigation" data-menu-wheel>
@@ -44,7 +47,12 @@ const items: Item[] = [
           style={`--i: ${i}; --total: ${items.length};`}
           data-column={item.column}
         >
-          <a href={item.href} role="menuitem" tabindex="-1">
+          <a
+            href={item.href}
+            role="menuitem"
+            tabindex="-1"
+            aria-current={isColumnCurrent(item.column) ? 'page' : undefined}
+          >
             {item.label}
           </a>
         </li>
@@ -250,6 +258,26 @@ const items: Item[] = [
 
   .menu-wheel__item a:focus-visible {
     outline: 2px solid var(--color-structural-300);
+    outline-offset: 2px;
+  }
+
+  /* Column items get solid column fills (the nav becomes a color legend);
+     Archive/About keep the glass-pill treatment above. Vars come from the
+     global [data-column] block. Solid fill → prefers-reduced-transparency
+     unaffected. */
+  .menu-wheel__item[data-column] a {
+    background: var(--column-600);
+    color: var(--column-200);
+  }
+
+  .menu-wheel__item[data-column] a:hover,
+  .menu-wheel__item[data-column] a[aria-current='page'] {
+    background: var(--column-500);
+    color: var(--column-100);
+  }
+
+  .menu-wheel__item[data-column] a:focus-visible {
+    outline: 2px solid var(--column-300);
     outline-offset: 2px;
   }
 
