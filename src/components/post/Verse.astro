@@ -1,0 +1,19 @@
+---
+// Renders verse with the text-verse token (18px / 1.45 serif), scoped to poetry.
+// Line breaks within a stanza come from Markdown hard breaks (trailing backslash);
+// blank lines between stanzas become separate <p> elements (stanzas).
+---
+
+<div class="verse text-verse font-serif">
+  <slot />
+</div>
+
+<style>
+  /* Slotted MDX paragraphs are stanzas — separate by roughly one line. */
+  .verse :global(p) {
+    margin: 0 0 1.5rem;
+  }
+  .verse :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
