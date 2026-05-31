@@ -12,7 +12,9 @@ const year = new Date().getFullYear();
         {
           COLUMNS_ALPHABETICAL.map((column) => (
             <li>
-              <a href={`/${column.slug}`}>{column.name}</a>
+              <a href={`/${column.slug}`} data-column={column.slug}>
+                {column.name}
+              </a>
             </li>
           ))
         }
@@ -89,6 +91,14 @@ const year = new Date().getFullYear();
 
   .site-footer a:hover {
     color: var(--color-text);
+  }
+
+  /* Column links hover to their own accent (the footer column list reads as a
+     legend, same idea as the nav pills). --column-300 comes from the global
+     [data-column] block and clears AA on the footer background. Non-column
+     links (Read group, etc.) keep the neutral hover above. */
+  .site-footer__group a[data-column]:hover {
+    color: var(--column-300);
   }
 
   .site-footer__group--wide p {
