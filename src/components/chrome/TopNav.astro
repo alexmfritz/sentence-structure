@@ -1,5 +1,5 @@
 ---
-import { COLUMNS_LIST } from '../../lib/columns';
+import { COLUMNS_ALPHABETICAL } from '../../lib/columns';
 
 // Mark the current column's pill via aria-current on its exact landing page.
 // Post pages (/memoir/slug) are not the column landing, so no pill is "page"
@@ -17,7 +17,7 @@ const isColumnCurrent = (slug: string) => current === `/${slug}`;
         <summary>Columns</summary>
         <ul class="top-nav__columns-list">
           {
-            COLUMNS_LIST.map((column) => (
+            COLUMNS_ALPHABETICAL.map((column) => (
               <li>
                 <a
                   href={`/${column.slug}`}

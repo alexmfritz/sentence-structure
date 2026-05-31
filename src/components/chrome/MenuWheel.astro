@@ -1,12 +1,12 @@
 ---
-import { COLUMNS_LIST } from '../../lib/columns';
+import { COLUMNS_ALPHABETICAL } from '../../lib/columns';
 
 // Two axes, two categories. Columns are content → the colored down-left
 // cascade (the color legend). Pages (Archive, About) are utility nav → a
 // separate neutral horizontal pair, level with the trigger, the way the
 // wordmark pill sits. This mirrors the split the mobile HamburgerMenu already
 // makes (its "Columns" vs "Read" groups); the wheel was the odd one out.
-const columnItems = COLUMNS_LIST.map((c) => ({
+const columnItems = COLUMNS_ALPHABETICAL.map((c) => ({
   label: c.name,
   href: `/${c.slug}`,
   column: c.slug,

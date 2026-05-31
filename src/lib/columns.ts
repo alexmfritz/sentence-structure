@@ -80,3 +80,11 @@ export const COLUMNS: Record<ColumnSlug, ColumnMeta> = {
 };
 
 export const COLUMNS_LIST: ColumnMeta[] = COLUMN_ORDER.map((slug) => COLUMNS[slug]);
+
+// Nav surfaces list the columns alphabetically by name. Memoir's prominence is
+// carried by the homepage hero card, not by nav order, so the nav doesn't need
+// to lead with it. COLUMN_ORDER stays canonical for content surfaces (homepage
+// column showcase, Memoir spine, archive default, footer).
+export const COLUMNS_ALPHABETICAL: ColumnMeta[] = [...COLUMNS_LIST].sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
