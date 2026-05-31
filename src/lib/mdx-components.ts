@@ -13,6 +13,7 @@ import BlockQuote from '../components/post/BlockQuote.astro';
 import Figure from '../components/post/Figure.astro';
 import ContentNote from '../components/post/ContentNote.astro';
 import LetterCallout from '../components/post/LetterCallout.astro';
+import Verse from '../components/post/Verse.astro';
 
 export const mdxComponents = {
   PullQuote,
@@ -22,4 +23,5 @@ export const mdxComponents = {
   Figure,
   ContentNote,
   LetterCallout,
+  Verse,
 };
